@@ -1,13 +1,15 @@
 import { Route, Routes } from "react-router-dom";
 import Layout from "../layout/Layout";
 import Dashboard from "./pages/Dashboard";
-import Projects from "./pages/Projects";
+// import Projects from "./pages/Projects";
+import Projects from "./pages/Projects/Projects";
 import Team from "./pages/Team";
 // import TaskAssign from './pages/TaskAssign';
 import TaskManager from "./pages/TaskManager/TaskManager";
 
 // import TaskManager from "./pages/TaskManager";
 import PendingUsers from "./pages/PendingUsers";
+import TaskDetailPage from "./pages/TaskManager/TaskDetailPage";
 
 const AdminRoutes = () => {
   return (
@@ -17,6 +19,8 @@ const AdminRoutes = () => {
         <Route path="projects" element={<Projects />} />
         <Route path="team" element={<Team />} />
         {/* <Route path="tasks-manager" element={<TaskManager />} /> */}
+        <Route path="tasks/:id" element={<TaskDetailPage />} />
+
         <Route path="tasks" element={<TaskManager />} />
         <Route path="tasks-manager" element={<Team />} />
         <Route path="pending-users" element={<PendingUsers />} />

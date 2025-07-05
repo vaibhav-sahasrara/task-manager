@@ -1,31 +1,26 @@
 import nodemailer from "nodemailer";
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+export const sendMail = async ({ to, subject, text, html }) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER, // must not be undefined
+      pass: process.env.EMAIL_PASS, // must not be undefined
+    },
+  });
+  console.log("EMAIL_USER =", process.env.EMAIL_USER);
+  console.log("EMAIL_PASS =", process.env.EMAIL_PASS);
 
-export const notifyAdmin = async (newUser) => {
   try {
     await transporter.sendMail({
       from: `"Task Manager" <${process.env.EMAIL_USER}>`,
-      to: "admin@gmail.com", // Replace with actual admin email
-      subject: "🔔 New User Registered",
-      html: `<p><strong>${newUser.name}</strong> just registered with email: ${newUser.email}</p>`,
+      to,
+      subject,
+      text,
+      html,
     });
-    console.log("📧 Email:", process.env.EMAIL_USER);
-    console.log(
-      "🔒 Pass:",
-      process.env.EMAIL_PASS ? "✔️ Loaded" : "❌ Missing"
-    );
-
-    console.log("📧 Admin notified via email.");
+    console.log(`📧 Email sent to ${to}`);
   } catch (error) {
-    console.error("❌ Email sending failed:", error.message);
+    console.error("❌ Failed to send email:", error);
   }
 };

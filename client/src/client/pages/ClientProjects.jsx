@@ -4,7 +4,10 @@ import { FiFolder, FiUsers, FiCalendar } from "react-icons/fi";
 
 const ClientProjects = () => {
   const [projects, setProjects] = useState([]);
-  const userId = "685fd114fe9bfd36ab1ec0cc";
+  // const userId = "685fd114fe9bfd36ab1ec0cc";
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?._id;
+  console.log(userId);
 
   useEffect(() => {
     const fetchProjects = async () => {

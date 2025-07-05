@@ -54,7 +54,7 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
-import { notifyAdmin } from "../utils/mailer.js"; // adjust path if needed
+// import { notifyAdmin } from "../utils/mailer.js"; 
 
 export const register = async (req, res) => {
   try {
@@ -111,5 +111,16 @@ export const login = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: "Login failed" });
+  }
+};
+
+
+// GET /api/users/clients
+export const getClients = async (req, res) => {
+  try {
+    const clients = await User.find({ role: "client" });
+    res.json(clients);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch clients", error });
   }
 };

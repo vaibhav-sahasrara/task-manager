@@ -5,6 +5,7 @@ import {
   updateTask,
   deleteTask,
   getTaskStats,
+  getTaskById ,
 } from '../controllers/taskController.js';
 
 const router = express.Router();
@@ -14,6 +15,8 @@ router.get('/stats', getTaskStats);
 router.post('/', createTask);
 router.put('/:id', updateTask);
 router.delete('/:id', deleteTask);
+router.get("/:id", getTaskById);
+
 
 import User from "../models/User.js";
 

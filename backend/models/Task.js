@@ -20,6 +20,7 @@ const taskSchema = new mongoose.Schema(
     },
 
     assignees: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     comments: [
       {
         user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

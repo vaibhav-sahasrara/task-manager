@@ -1,9 +1,10 @@
 import Task from "../models/Task.js";
 import moment from "moment";
-
 import mongoose from "mongoose";
 // import Task from "../models/Task.js";
 import User from "../models/User.js";
+import { sendMail } from "../utils/mailer.js";
+import { taskAssignedTemplate } from "../utils/templates/taskAssignedTemplate.js";
 
 export const createTask = async (req, res) => {
   try {
@@ -19,13 +20,11 @@ export const createTask = async (req, res) => {
       project,
     } = req.body;
 
-    // ✅ Convert strings to ObjectIds and validate against existing users
     const validAssignees = await User.find({
       _id: { $in: assignees.map((id) => new mongoose.Types.ObjectId(id)) },
-    }).select("_id");
+    }).select("_id email name");
 
     const validAssigneeIds = validAssignees.map((user) => user._id);
-    console.log("🔍 Valid Assignees Found:", validAssigneeIds);
 
     const newTask = new Task({
       name,
@@ -35,7 +34,7 @@ export const createTask = async (req, res) => {
       priority,
       status,
       tags,
-      assignees: validAssigneeIds, // ✅ only valid users
+      assignees: validAssigneeIds,
       project,
       activityLogs: [
         {
@@ -48,11 +47,24 @@ export const createTask = async (req, res) => {
 
     const savedTask = await newTask.save();
 
+    // ✅ Notify each assignee via email
+    for (const user of validAssignees) {
+      const { subject, html } = taskAssignedTemplate({
+        name,
+        userName: user.name,
+        deadline,
+      });
+
+      await sendMail({
+        to: user.email,
+        subject,
+        html,
+      });
+    }
+
     const fullTask = await Task.findById(savedTask._id)
       .populate("assignees", "name _id")
       .populate("project", "name");
-
-    console.log("✅ Saved task with populated assignees:", fullTask.assignees);
 
     res.status(201).json(fullTask);
   } catch (err) {
@@ -61,21 +73,42 @@ export const createTask = async (req, res) => {
   }
 };
 
-// @desc    Get all tasks
+// export const getAllTasks = async (req, res) => {
+//   try {
+//     const { assigneeId } = req.query;
+
+//     let query = {};
+//     if (assigneeId) {
+//       query.assignees = assigneeId; // ✅ Fix key from "assignee.value" to correct MongoDB field
+//     }
+
+//     const tasks = await Task.find(query)
+//       .sort({ createdAt: -1 })
+//       .populate("assignees", "name _id") // ✅ This line is key
+//       .populate("creator", "name") // (optional) if you use creator
+//       .populate("project", "name"); // (optional) if needed
+
+//     res.json(tasks);
+//   } catch (err) {
+//     console.error("Error fetching tasks:", err);
+//     res.status(500).json({ error: "Server error" });
+//   }
+// };
+
 export const getAllTasks = async (req, res) => {
   try {
     const { assigneeId } = req.query;
 
     let query = {};
     if (assigneeId) {
-      query.assignees = assigneeId; // ✅ Fix key from "assignee.value" to correct MongoDB field
+      query.assignees = assigneeId;
     }
 
     const tasks = await Task.find(query)
       .sort({ createdAt: -1 })
-      .populate("assignees", "name _id") // ✅ This line is key
-      .populate("creator", "name") // (optional) if you use creator
-      .populate("project", "name"); // (optional) if needed
+      .populate("assignees", "name _id") // 👈 currently this line
+      .populate("creator", "name")
+      .populate("project", "name");
 
     res.json(tasks);
   } catch (err) {
@@ -85,37 +118,6 @@ export const getAllTasks = async (req, res) => {
 };
 
 // @desc    Update a task
-// export const updateTask = async (req, res) => {
-//   try {
-//     // 1️⃣ Perform update
-//     await Task.findByIdAndUpdate(
-//       req.params.id,
-//       {
-//         ...req.body,
-//         $push: {
-//           activityLogs: {
-//             user: req.user?._id || null,
-//             action: "Updated task",
-//             details: `Task '${req.body.name}' was updated.`,
-//           },
-//         },
-//       },
-//       { new: true }
-//     );
-
-//     // 2️⃣ Re-fetch with full population
-//     const updatedTask = await Task.findById(req.params.id)
-//       .populate("assignees", "name _id")
-//       .populate("creator", "name")
-//       .populate("project", "name");
-
-//     res.json(updatedTask);
-//   } catch (err) {
-//     console.error("❌ Error updating task:", err);
-//     res.status(400).json({ error: "Invalid update data" });
-//   }
-// };
-
 export const updateTask = async (req, res) => {
   try {
     const { activityLogs, ...rest } = req.body;
@@ -231,5 +233,21 @@ export const getTaskStats = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
+  }
+};
+
+export const getTaskById = async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id)
+      .populate("assignees", "name") // optional
+      .populate("owner", "name");
+
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    res.json(task);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };

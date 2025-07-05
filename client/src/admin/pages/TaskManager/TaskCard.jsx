@@ -1,76 +1,5 @@
-// import React from "react";
-// import { FiEdit, FiTrash2 } from "react-icons/fi";
-
-// // Priority-based Tailwind classes
-// const priorityColors = {
-//   Low: "bg-green-50 border-l-4 border-green-400",
-//   Medium: "bg-yellow-50 border-l-4 border-yellow-400",
-//   High: "bg-red-50 border-l-4 border-red-400",
-// };
-
-// const TaskCard = ({
-//   task,
-//   innerRef,
-//   dragHandleProps,
-//   draggableProps,
-//   onEdit,
-//   onDelete,
-// }) => {
-//   const priorityClass = priorityColors[task.priority] || "bg-gray-50 border";
-
-//   return (
-//     <div
-//       ref={innerRef}
-//       {...dragHandleProps}
-//       {...draggableProps}
-//       className={`rounded-xl p-4 mb-3 shadow hover:shadow-md transition ${priorityClass}`}
-//     >
-//       <div className="flex justify-between items-start">
-//         <div>
-//           <h3 className="font-bold text-indigo-800">{task.name}</h3>
-//           <p className="text-sm text-gray-600 mt-1">
-//             {task.description || "No description"}
-//           </p>
-
-//           <p className="text-sm text-gray-700 mt-1">
-//             <strong>Start Date:</strong>{" "}
-//             {new Date(task.startDate).toLocaleDateString("en-GB")}
-//           </p>
-//           <p className="text-sm text-gray-700 mt-1">
-//             <strong>Deadline:</strong>{" "}
-//             {new Date(task.deadline).toLocaleDateString("en-GB")}
-//           </p>
-//           <p className="text-sm text-gray-600 mt-1">
-//             <strong>Assignees:</strong>{" "}
-//             {(task.assignees || []).map((a) => a.label).join(", ")}
-//           </p>
-//           <span className="inline-block mt-2 text-xs px-3 py-1 rounded-full bg-white border text-gray-700">
-//             Priority: {task.priority}
-//           </span>
-//         </div>
-
-//         <div className="flex gap-2 mt-1">
-//           <button
-//             onClick={onEdit}
-//             className="text-blue-500 hover:text-blue-700"
-//           >
-//             <FiEdit />
-//           </button>
-//           <button
-//             onClick={onDelete}
-//             className="text-red-500 hover:text-red-700"
-//           >
-//             <FiTrash2 />
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default TaskCard;
-
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { FaUser } from "react-icons/fa";
 import { BsTag } from "react-icons/bs";
@@ -106,6 +35,7 @@ const TaskCard = ({
   onEdit,
   onDelete,
 }) => {
+  const navigate = useNavigate();
   const priority = task.priority || "Default";
   const styles = priorityStyles[priority] || priorityStyles.Default;
 
@@ -114,6 +44,7 @@ const TaskCard = ({
       ref={innerRef}
       {...dragHandleProps}
       {...draggableProps}
+      onClick={() => navigate(`/admin/tasks/${task._id}`)}
       className={`rounded-xl border ${styles.card} shadow hover:shadow-lg p-3 transform hover:scale-[1.01] transition-all duration-300 mb-3`}
     >
       {/* Header */}
