@@ -20,6 +20,12 @@ export default function AdminSidebar({ isOpen, toggleSidebar }) {
       label: "User Approvals",
       icon: <FiUserCheck />,
     },
+
+     {
+      path: "/admin/all-users",
+      label: "All Users",
+      icon: <FiUserCheck />,
+    },
   ];
 
   return (

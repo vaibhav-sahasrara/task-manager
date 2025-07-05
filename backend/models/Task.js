@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const taskSchema = new mongoose.Schema(
   {
@@ -19,8 +19,11 @@ const taskSchema = new mongoose.Schema(
       default: "To Do",
     },
 
-    assignees: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    // assignees: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    assignees: [{ type: mongoose.Schema.Types.ObjectId, ref: "TeamMember" }],
+    project: { type: mongoose.Schema.Types.ObjectId, ref: "Project" },
+
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     comments: [
       {
         user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
@@ -39,11 +42,14 @@ const taskSchema = new mongoose.Schema(
     tags: [String],
 
     project: { type: mongoose.Schema.Types.ObjectId, ref: "Project" },
-    creator: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
-
+    creator: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    statusHistory: [
+      {
+        status: String,
+        changedAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   { timestamps: true }
 );
-export default mongoose.model('Task', taskSchema);
-
-
+export default mongoose.model("Task", taskSchema);

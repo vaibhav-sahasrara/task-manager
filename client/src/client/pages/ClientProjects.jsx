@@ -4,10 +4,10 @@ import { FiFolder, FiUsers, FiCalendar } from "react-icons/fi";
 
 const ClientProjects = () => {
   const [projects, setProjects] = useState([]);
-  // const userId = "685fd114fe9bfd36ab1ec0cc";
+
   const user = JSON.parse(localStorage.getItem("user"));
-  const userId = user?._id;
-  console.log(userId);
+  const userId =
+    typeof user?.linkedMember === "object" ? user.linkedMember._id : user._id;
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -21,28 +21,32 @@ const ClientProjects = () => {
       }
     };
 
-    fetchProjects();
-  }, []);
+    if (userId) {
+      fetchProjects();
+    }
+  }, [userId]);
 
   return (
-    <div className="space-y-8">
+    <div className=" space-y-6">
       <h1 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
-        <FiFolder /> Your Projects
+        Your Projects
       </h1>
 
       {projects.length === 0 ? (
-        <p className="text-gray-400">No projects assigned yet.</p>
+        <div className="bg-white rounded-xl p-6 shadow text-center text-gray-500">
+          No projects assigned yet.
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project) => (
             <div
               key={project._id}
-              className="bg-white border border-indigo-100 shadow-lg rounded-2xl p-5 hover:shadow-indigo-200 transition"
+              className="bg-white p-5 rounded-xl shadow hover:shadow-md border border-gray-100 transition"
             >
-              <h2 className="text-xl font-semibold text-indigo-800 mb-2">
+              <h2 className="text-lg font-semibold text-indigo-800 mb-1">
                 {project.name}
               </h2>
-              <p className="text-sm text-gray-600 mb-3">
+              <p className="text-sm text-gray-600 mb-3 line-clamp-3">
                 {project.description}
               </p>
 
@@ -54,26 +58,42 @@ const ClientProjects = () => {
                 <p>
                   <strong>Priority:</strong>{" "}
                   <span
-                    className={`font-semibold ${
+                    className={`${
                       project.priority === "High"
                         ? "text-red-600"
                         : project.priority === "Medium"
                         ? "text-yellow-600"
                         : "text-green-600"
-                    }`}
+                    } font-semibold`}
                   >
                     {project.priority}
                   </span>
                 </p>
-                <p className="flex items-center gap-1">
-                  <FiCalendar className="text-gray-500" />{" "}
+                <p className="flex items-center gap-1 text-gray-500">
+                  <FiCalendar />
                   {new Date(project.deadline).toLocaleDateString("en-GB")}
                 </p>
-                <p className="flex items-center gap-1">
-                  <FiUsers className="text-gray-500" />
-                  {project.team.map((member) => member.name).join(", ") ||
-                    "No Team"}
-                </p>
+
+                {/* Team Members */}
+                <div className="flex items-start gap-2 mt-2">
+                  <FiUsers className="text-gray-500 mt-1" />
+                  <div className="space-y-1">
+                    {project.team.length === 0 ? (
+                      <span className="text-gray-500">No team assigned</span>
+                    ) : (
+                      project.team.map((member) => (
+                        <div
+                          key={member._id}
+                          className="flex items-center gap-2"
+                        >
+                          <span className="text-indigo-800 font-medium">
+                            {member.name}
+                          </span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           ))}

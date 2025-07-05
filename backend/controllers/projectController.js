@@ -50,7 +50,7 @@ export const getAllProjects = async (req, res) => {
 
     const projects = await Project.find(filter).populate(
       "owner team",
-      "name email avatar"
+      "name email avatar linkedMember"
     );
     res.status(200).json(projects);
   } catch (err) {
@@ -63,7 +63,7 @@ export const getProjectById = async (req, res) => {
   try {
     const project = await Project.findById(req.params.id).populate(
       "owner team",
-      "name email avatar"
+      "name email avatar linkedMember"
     );
     if (!project) return res.status(404).json({ message: "Project not found" });
     res.status(200).json(project);
@@ -102,7 +102,7 @@ export const getProjectsByUser = async (req, res) => {
 
     const projects = await Project.find({
       $or: [{ owner: userId }, { team: userId }],
-    }).populate("owner team", "name email avatar");
+    }).populate("owner team", "name email avatar linkedMember");
 
     res.status(200).json(projects);
   } catch (err) {

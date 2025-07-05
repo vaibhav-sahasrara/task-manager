@@ -55,6 +55,7 @@ const TableView = ({ tasks }) => {
               <tr>
                 <th className="text-left px-3 py-2">#</th>
                 <th className="text-left px-3 py-2">Task</th>
+                <th className="text-left px-3 py-2">Project</th>
                 <th className="text-left px-3 py-2">Description</th>
                 <th className="text-left px-3 py-2">Priority</th>
                 <th className="text-left px-3 py-2">Status</th>
@@ -72,6 +73,10 @@ const TableView = ({ tasks }) => {
                   <td className="px-3 py-2 font-medium text-indigo-700">
                     {t.name}
                   </td>
+                  <td className="px-3 py-2 font-medium text-indigo-700">
+                    {t.name}
+                  </td>
+
                   <td className="px-3 py-2 text-gray-600">{t.description}</td>
                   <td className="px-3 py-2">
                     <span

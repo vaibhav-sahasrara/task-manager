@@ -1,11 +1,15 @@
+
+
 import Task from "../models/Task.js";
 import moment from "moment";
 import mongoose from "mongoose";
-// import Task from "../models/Task.js";
 import User from "../models/User.js";
+import TeamMember from "../models/TeamMember.js";
+import Project from "../models/Project.js";
 import { sendMail } from "../utils/mailer.js";
 import { taskAssignedTemplate } from "../utils/templates/taskAssignedTemplate.js";
 
+// ✅ Create Task
 export const createTask = async (req, res) => {
   try {
     const {
@@ -20,11 +24,26 @@ export const createTask = async (req, res) => {
       project,
     } = req.body;
 
-    const validAssignees = await User.find({
-      _id: { $in: assignees.map((id) => new mongoose.Types.ObjectId(id)) },
-    }).select("_id email name");
+    const projectDoc = await Project.findById(project).select("name team");
+    if (!projectDoc)
+      return res.status(404).json({ error: "Project not found" });
 
-    const validAssigneeIds = validAssignees.map((user) => user._id);
+    const validAssignees = await TeamMember.find({
+      _id: { $in: assignees.map((id) => new mongoose.Types.ObjectId(id)) },
+    }).select("_id email name userRef");
+
+    const validAssigneeIds = validAssignees.map((tm) => tm._id.toString());
+    const projectTeamIds = projectDoc.team.map((id) => id.toString());
+
+    const invalidAssignees = validAssigneeIds.filter(
+      (id) => !projectTeamIds.includes(id)
+    );
+    if (invalidAssignees.length > 0) {
+      return res.status(400).json({
+        error: "Some assignees are not part of the project's team",
+        invalidAssignees,
+      });
+    }
 
     const newTask = new Task({
       name,
@@ -36,6 +55,7 @@ export const createTask = async (req, res) => {
       tags,
       assignees: validAssigneeIds,
       project,
+      creator: req.user?._id || null,
       activityLogs: [
         {
           user: req.user?._id || null,
@@ -47,24 +67,30 @@ export const createTask = async (req, res) => {
 
     const savedTask = await newTask.save();
 
-    // ✅ Notify each assignee via email
-    for (const user of validAssignees) {
-      const { subject, html } = taskAssignedTemplate({
-        name,
-        userName: user.name,
-        deadline,
-      });
-
-      await sendMail({
-        to: user.email,
-        subject,
-        html,
-      });
+    // ✅ Send email to assignees
+    for (const member of validAssignees) {
+      if (!member.userRef) continue;
+      const user = await User.findById(member.userRef).select("email name");
+      if (user?.email) {
+        const { subject, html } = taskAssignedTemplate({
+          name,
+          userName: user.name,
+          deadline,
+        });
+        await sendMail({ to: user.email, subject, html });
+      }
     }
 
     const fullTask = await Task.findById(savedTask._id)
-      .populate("assignees", "name _id")
-      .populate("project", "name");
+      .populate("assignees", "name email _id")
+      .populate({
+        path: "project",
+        select: "name owner",
+        populate: {
+          path: "owner",
+          select: "name email",
+        },
+      });
 
     res.status(201).json(fullTask);
   } catch (err) {
@@ -73,42 +99,26 @@ export const createTask = async (req, res) => {
   }
 };
 
-// export const getAllTasks = async (req, res) => {
-//   try {
-//     const { assigneeId } = req.query;
-
-//     let query = {};
-//     if (assigneeId) {
-//       query.assignees = assigneeId; // ✅ Fix key from "assignee.value" to correct MongoDB field
-//     }
-
-//     const tasks = await Task.find(query)
-//       .sort({ createdAt: -1 })
-//       .populate("assignees", "name _id") // ✅ This line is key
-//       .populate("creator", "name") // (optional) if you use creator
-//       .populate("project", "name"); // (optional) if needed
-
-//     res.json(tasks);
-//   } catch (err) {
-//     console.error("Error fetching tasks:", err);
-//     res.status(500).json({ error: "Server error" });
-//   }
-// };
-
+// ✅ Get All Tasks
 export const getAllTasks = async (req, res) => {
   try {
     const { assigneeId } = req.query;
 
     let query = {};
-    if (assigneeId) {
-      query.assignees = assigneeId;
-    }
+    if (assigneeId) query.assignees = assigneeId;
 
     const tasks = await Task.find(query)
       .sort({ createdAt: -1 })
-      .populate("assignees", "name _id") // 👈 currently this line
+      .populate("assignees", "name email")
       .populate("creator", "name")
-      .populate("project", "name");
+      .populate({
+        path: "project",
+        select: "name owner",
+        populate: {
+          path: "owner",
+          select: "name email",
+        },
+      });
 
     res.json(tasks);
   } catch (err) {
@@ -117,7 +127,30 @@ export const getAllTasks = async (req, res) => {
   }
 };
 
-// @desc    Update a task
+// ✅ Get Task by ID
+export const getTaskById = async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id)
+      .populate("assignees", "name email")
+      .populate("creator", "name")
+      .populate({
+        path: "project",
+        select: "name owner",
+        populate: {
+          path: "owner",
+          select: "name email",
+        },
+      });
+
+    if (!task) return res.status(404).json({ message: "Task not found" });
+
+    res.json(task);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+// ✅ Update Task
 export const updateTask = async (req, res) => {
   try {
     const { activityLogs, ...rest } = req.body;
@@ -136,9 +169,16 @@ export const updateTask = async (req, res) => {
     const updatedTask = await Task.findByIdAndUpdate(req.params.id, updateOps, {
       new: true,
     })
-      .populate("assignees", "name _id")
+      .populate("assignees", "name email")
       .populate("creator", "name")
-      .populate("project", "name");
+      .populate({
+        path: "project",
+        select: "name owner",
+        populate: {
+          path: "owner",
+          select: "name email",
+        },
+      });
 
     res.json(updatedTask);
   } catch (err) {
@@ -149,7 +189,7 @@ export const updateTask = async (req, res) => {
   }
 };
 
-// @desc    Delete a task
+// ✅ Delete Task
 export const deleteTask = async (req, res) => {
   try {
     const deleted = await Task.findByIdAndDelete(req.params.id);
@@ -160,6 +200,7 @@ export const deleteTask = async (req, res) => {
   }
 };
 
+// ✅ Task Stats
 export const getTaskStats = async (req, res) => {
   try {
     const allTasks = await Task.find();
@@ -173,12 +214,10 @@ export const getTaskStats = async (req, res) => {
     const upcomingDeadlines = [];
 
     allTasks.forEach((task) => {
-      // Completion counter
-      if (["done", "completed"].includes(task.status.toLowerCase())) {
+      if (["done", "completed"].includes(task.status?.toLowerCase())) {
         completedTasks++;
       }
 
-      // Overdue
       if (
         task.deadline &&
         new Date(task.deadline) < now &&
@@ -187,7 +226,6 @@ export const getTaskStats = async (req, res) => {
         overdueTasks.push(task);
       }
 
-      // Upcoming deadlines this week
       if (
         task.deadline &&
         new Date(task.deadline) >= now &&
@@ -196,17 +234,12 @@ export const getTaskStats = async (req, res) => {
         upcomingDeadlines.push(task);
       }
 
-      // Project progress map
       const projectId =
         task.project?._id?.toString() || task.project?.toString();
       if (!projectId) return;
 
       if (!projectMap[projectId]) {
-        projectMap[projectId] = {
-          projectId,
-          total: 0,
-          completed: 0,
-        };
+        projectMap[projectId] = { projectId, total: 0, completed: 0 };
       }
 
       projectMap[projectId].total++;
@@ -233,21 +266,5 @@ export const getTaskStats = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
-  }
-};
-
-export const getTaskById = async (req, res) => {
-  try {
-    const task = await Task.findById(req.params.id)
-      .populate("assignees", "name") // optional
-      .populate("owner", "name");
-
-    if (!task) {
-      return res.status(404).json({ message: "Task not found" });
-    }
-
-    res.json(task);
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
   }
 };

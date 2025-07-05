@@ -104,6 +104,13 @@ const TaskCard = ({
         </div>
       )}
 
+      {/* 👇 Add this block here 👇 */}
+      {task.project?.name && (
+        <p className="text-xs text-indigo-700 font-medium mb-2">
+          📁 Project: {task.project.name}
+        </p>
+      )}
+
       {/* Progress Bar */}
       <div className="mb-3">
         <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">

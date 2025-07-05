@@ -7,7 +7,7 @@ import TableView from "./TableView";
 import TaskModal from "./TaskModal";
 import Filters from "./Filters";
 import { groupTasksByStatus, normalizeAssignees } from "./utils";
-import axios from "../../../utils/axiosInstance"; // use relative path
+import axios from "../../../utils/axiosInstance"; 
 
 const TaskManager = () => {
   const [taskList, setTaskList] = useState([]);
@@ -22,7 +22,7 @@ const TaskManager = () => {
 
   const fetchTeamMembers = async () => {
     try {
-      const res = await axios.get("/api/users", config);
+      const res = await axios.get("/api/team", config);
       const options = res.data.map((user) => ({
         label: user.name,
         value: user._id,
@@ -105,6 +105,21 @@ const TaskManager = () => {
     }
   };
 
+  const onEditWithTeam = async (task) => {
+    if (teamMembers.length === 0) {
+      await fetchTeamMembers(); // refetch team members if not loaded
+    }
+
+    const normalized = normalizeAssignees(task.assignees, teamMembers);
+
+    setEditTaskData({
+      ...task,
+      assignees: normalized,
+    });
+
+    setShowModal(true);
+  };
+
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center mb-6">
@@ -112,8 +127,21 @@ const TaskManager = () => {
           <h1 className="text-2xl font-bold text-gray-700">Task Manager</h1>
           <p className="text-sm text-gray-500">Manage all your team’s tasks</p>
         </div>
-        <button
+        {/* <button
           onClick={() => setShowModal(true)}
+          className="bg-indigo-600 text-white px-5 py-2.5 rounded-full flex items-center gap-2 shadow hover:scale-105"
+        >
+          <FiPlus /> New Task
+        </button> */}
+
+        <button
+          onClick={async () => {
+            if (teamMembers.length === 0) {
+              await fetchTeamMembers();
+            }
+            setEditTaskData(null); // ensure it's a new task
+            setShowModal(true);
+          }}
           className="bg-indigo-600 text-white px-5 py-2.5 rounded-full flex items-center gap-2 shadow hover:scale-105"
         >
           <FiPlus /> New Task
@@ -133,7 +161,7 @@ const TaskManager = () => {
             groupedTasks={groupedByStatus}
             onEdit={setEditTaskData}
             onDelete={deleteTask}
-            openModal={() => setShowModal(true)}
+            // openModal={() => setShowModal(true)}
           />
         ) : (
           <TableView tasks={filteredTasks} />

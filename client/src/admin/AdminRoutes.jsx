@@ -10,6 +10,7 @@ import TaskManager from "./pages/TaskManager/TaskManager";
 // import TaskManager from "./pages/TaskManager";
 import PendingUsers from "./pages/PendingUsers";
 import TaskDetailPage from "./pages/TaskManager/TaskDetailPage";
+import AllUsers from "./pages/Users/AllUsers";
 
 const AdminRoutes = () => {
   return (
@@ -24,7 +25,7 @@ const AdminRoutes = () => {
         <Route path="tasks" element={<TaskManager />} />
         <Route path="tasks-manager" element={<Team />} />
         <Route path="pending-users" element={<PendingUsers />} />
-
+        <Route path="all-users" element={<AllUsers />} />
         <Route path="*" element={<Dashboard />} />
       </Route>
     </Routes>
