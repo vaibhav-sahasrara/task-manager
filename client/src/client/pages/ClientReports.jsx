@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../utils/axiosInstance";
 import {
   FiFileText,
   FiBarChart2,
@@ -22,8 +22,8 @@ const ClientReports = () => {
     const fetchReports = async () => {
       try {
         const [tasksRes, projectsRes] = await Promise.all([
-          axios.get(`http://localhost:5000/api/tasks/client-tasks/${userId}`),
-          axios.get(`http://localhost:5000/api/projects/user/${memberId}`),
+          axios.get(`/api/tasks/client-tasks/${userId}`),
+          axios.get(`/api/projects/user/${memberId}`),
         ]);
 
         setTasks(tasksRes.data.tasks || []);

@@ -1,7 +1,6 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../utils/axiosInstance";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext"; // adjust path
 
@@ -22,16 +21,13 @@ export default function Login() {
     setError("");
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        form
-      );
+      const res = await axios.post("/api/auth/login", form);
       const { token, user } = res.data;
 
       localStorage.setItem("token", token);
       localStorage.setItem("role", user.role);
       localStorage.setItem("user", JSON.stringify(user));
-login(user); // <-- this sets it into React Context too
+      login(user); // <-- this sets it into React Context too
 
       if (user.role === "admin") {
         navigate("/admin/dashboard");

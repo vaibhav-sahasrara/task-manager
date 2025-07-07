@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../utils/axiosInstance";
 import { FiFolder, FiUsers, FiCalendar } from "react-icons/fi";
 
 const ClientProjects = () => {
@@ -13,7 +13,7 @@ const ClientProjects = () => {
     const fetchProjects = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/projects/user/${userId}`
+          `/api/projects/user/${userId}`
         );
         setProjects(res.data);
       } catch (err) {

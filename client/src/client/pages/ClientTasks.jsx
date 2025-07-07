@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../utils/axiosInstance";
 import { motion } from "framer-motion";
 import {
   FiCheckCircle,
@@ -21,7 +21,7 @@ const ClientTasks = () => {
       if (!memberId) return;
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/tasks?assigneeId=${memberId}`
+          `/api/tasks?assigneeId=${memberId}`
         );
         setTasks(res.data);
         setAssignedTo(user.name);
@@ -34,7 +34,7 @@ const ClientTasks = () => {
 
   const handleStatusChange = async (taskId, newStatus) => {
     try {
-      await axios.put(`http://localhost:5000/api/tasks/${taskId}`, {
+      await axios.put(`/api/tasks/${taskId}`, {
         status: newStatus,
       });
 

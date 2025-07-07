@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../utils/axiosInstance";
 
 const ClientHome = () => {
   const [projects, setProjects] = useState([]);
@@ -16,12 +16,12 @@ const ClientHome = () => {
 
       try {
         const taskRes = await axios.get(
-          `http://localhost:5000/api/tasks/client-tasks/${userId}`
+          `/api/tasks/client-tasks/${userId}`
         );
         setTasks(taskRes.data.tasks || []);
 
         const projectRes = await axios.get(
-          `http://localhost:5000/api/projects/user/${memberId}`
+          `/api/projects/user/${memberId}`
         );
         setProjects(projectRes.data || []);
       } catch (err) {

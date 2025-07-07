@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios from "../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
@@ -28,7 +28,7 @@ export default function Register() {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/auth/register", {
+      await axios.post("/api/auth/register", {
         name: form.name,
         email: form.email,
         password: form.password,

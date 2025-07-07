@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../../utils/axiosInstance";
+
 import { FiPlus } from "react-icons/fi";
 import ProjectCard from "./ProjectCard";
 import ProjectForm from "./ProjectForm";
@@ -32,7 +33,7 @@ const Projects = () => {
 
   const fetchProjects = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/projects");
+      const res = await axios.get("/api/projects");
       setProjects(res.data);
     } catch (err) {
       console.error(err);
@@ -41,7 +42,7 @@ const Projects = () => {
 
   const fetchTeam = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/team", {
+      const res = await axios.get("/api/team", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -56,7 +57,7 @@ const Projects = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/auth/clients")
+      .get("/api/auth/clients")
       .then((res) => {
         const options = res.data.map((client) => ({
           value: client._id,
@@ -79,7 +80,7 @@ const Projects = () => {
 
   const handleFormSubmit = async (data) => {
     try {
-      await axios.post("http://localhost:5000/api/projects", data);
+      await axios.post("/api/projects", data);
       fetchProjects();
       setFormData(initialForm);
       setShowAddForm(false);

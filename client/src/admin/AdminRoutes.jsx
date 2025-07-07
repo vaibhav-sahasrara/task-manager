@@ -3,7 +3,7 @@ import Layout from "../layout/Layout";
 import Dashboard from "./pages/Dashboard/Dashboard";
 // import Projects from "./pages/Projects";
 import Projects from "./pages/Projects/Projects";
-import Team from "./pages/Team";
+import Team from "./pages/Team/Team";
 // import TaskAssign from './pages/TaskAssign';
 import TaskManager from "./pages/TaskManager/TaskManager";
 

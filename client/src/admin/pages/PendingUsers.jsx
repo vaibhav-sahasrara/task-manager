@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../utils/axiosInstance";
+
 import { FiUserCheck, FiMail } from "react-icons/fi";
 
 const PendingUsers = () => {
@@ -11,7 +12,7 @@ const PendingUsers = () => {
     const fetchPendingUsers = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/admin/pending-users",
+          "/api/admin/pending-users",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -38,7 +39,7 @@ const PendingUsers = () => {
     const role = selectedRoles[id];
     try {
       await axios.put(
-        `http://localhost:5000/api/admin/approve-user/${id}`,
+        `/api/admin/approve-user/${id}`,
         { role },
         { headers: { Authorization: `Bearer ${token}` } }
       );
