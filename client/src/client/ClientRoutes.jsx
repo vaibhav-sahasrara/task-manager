@@ -5,7 +5,7 @@ import ClientProjects from './pages/ClientProjects';
 import ClientTasks from './pages/ClientTasks';
 import ClientReports from './pages/ClientReports';
 import ClientProfile from './pages/ClientProfile';
-import ClientSupport from './pages/ClientSupport';
+// import ClientSupport from './pages/ClientSupport';
 
 const ClientRoutes = () => {
   return (
@@ -16,7 +16,7 @@ const ClientRoutes = () => {
         <Route path="tasks" element={<ClientTasks />} />
         <Route path="reports" element={<ClientReports />} />
         <Route path="profile" element={<ClientProfile />} />
-        <Route path="support" element={<ClientSupport />} />
+        {/* <Route path="support" element={<ClientSupport />} /> */}
         <Route path="*" element={<ClientHome />} />
       </Route>
     </Routes>
