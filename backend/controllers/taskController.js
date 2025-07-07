@@ -1,5 +1,3 @@
-
-
 import Task from "../models/Task.js";
 import moment from "moment";
 import mongoose from "mongoose";
@@ -266,5 +264,38 @@ export const getTaskStats = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
+  }
+};
+
+
+// ✅ GET Tasks Assigned to a Client User (via userRef in TeamMember)
+export const getTasksForClientUser = async (req, res) => {
+  try {
+    const { userId } = req.params; // This is the User._id (from req.params)
+
+    // Step 1: Find corresponding TeamMember
+    const teamMember = await TeamMember.findOne({ userRef: userId });
+    if (!teamMember) {
+      return res.status(404).json({ error: "Team member not found for user." });
+    }
+
+    // Step 2: Fetch Tasks where this TeamMember is assigned
+    const tasks = await Task.find({ assignees: teamMember._id })
+      .sort({ createdAt: -1 })
+      .populate("assignees", "name email")
+      .populate("creator", "name")
+      .populate({
+        path: "project",
+        select: "name owner",
+        populate: {
+          path: "owner",
+          select: "name email",
+        },
+      });
+
+    res.json({ tasks, assignedTo: teamMember.name });
+  } catch (err) {
+    console.error("❌ Error fetching tasks for client:", err);
+    res.status(500).json({ error: "Server error", details: err.message });
   }
 };
