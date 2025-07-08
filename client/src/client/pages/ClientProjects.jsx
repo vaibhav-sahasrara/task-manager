@@ -4,20 +4,23 @@ import { FiFolder, FiUsers, FiCalendar } from "react-icons/fi";
 
 const ClientProjects = () => {
   const [projects, setProjects] = useState([]);
+  const [userId, setUserId] = useState(null);
 
-  const user = JSON.parse(localStorage.getItem("user"));
-  const userId =
-    typeof user?.linkedMember === "object" ? user.linkedMember._id : user._id;
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+      const id = storedUser.linkedMember?._id || storedUser._id;
+      setUserId(id);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await axios.get(
-          `/api/projects/user/${userId}`
-        );
+        const res = await axios.get(`/api/projects/user/${userId}`);
         setProjects(res.data);
       } catch (err) {
-        console.error("Failed to fetch projects", err);
+        console.error("❌ Failed to fetch projects", err);
       }
     };
 
@@ -26,8 +29,16 @@ const ClientProjects = () => {
     }
   }, [userId]);
 
+  if (!userId) {
+    return (
+      <div className="text-red-500 text-center py-10">
+        User not found. Please log in again.
+      </div>
+    );
+  }
+
   return (
-    <div className=" space-y-6">
+    <div className="space-y-6">
       <h1 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
         Your Projects
       </h1>
@@ -104,3 +115,4 @@ const ClientProjects = () => {
 };
 
 export default ClientProjects;
+

@@ -7,9 +7,11 @@ import TableView from "./TableView";
 import TaskModal from "./TaskModal";
 import Filters from "./Filters";
 import { groupTasksByStatus, normalizeAssignees } from "./utils";
-import axios from "../../../utils/axiosInstance"; 
+import axios from "../../../utils/axiosInstance";
+import { useSocket } from "../../../context/SocketContext";
 
 const TaskManager = () => {
+  const { socket } = useSocket();
   const [taskList, setTaskList] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
   const [filters, setFilters] = useState({ priority: "", status: "" });
@@ -19,6 +21,42 @@ const TaskManager = () => {
 
   const token = localStorage.getItem("token");
   const config = { headers: { Authorization: `Bearer ${token}` } };
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleTaskCreated = (task) => {
+      const normalized = {
+        ...task,
+        assignees: normalizeAssignees(task.assignees, teamMembers),
+      };
+      setTaskList((prev) => [normalized, ...prev]);
+    };
+
+    const handleTaskUpdated = (task) => {
+      const normalized = {
+        ...task,
+        assignees: normalizeAssignees(task.assignees, teamMembers),
+      };
+      setTaskList((prev) =>
+        prev.map((t) => (t._id === task._id ? normalized : t))
+      );
+    };
+
+    const handleTaskDeleted = ({ taskId }) => {
+      setTaskList((prev) => prev.filter((t) => t._id !== taskId));
+    };
+
+    socket.on("taskCreated", handleTaskCreated);
+    socket.on("taskUpdated", handleTaskUpdated);
+    socket.on("taskDeleted", handleTaskDeleted);
+
+    return () => {
+      socket.off("taskCreated", handleTaskCreated);
+      socket.off("taskUpdated", handleTaskUpdated);
+      socket.off("taskDeleted", handleTaskDeleted);
+    };
+  }, [socket, teamMembers]);
 
   const fetchTeamMembers = async () => {
     try {

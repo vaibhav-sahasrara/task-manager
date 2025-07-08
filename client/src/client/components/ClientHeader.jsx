@@ -29,30 +29,30 @@
 //     </header>
 //   );
 // }
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FiLogOut, FiChevronDown } from 'react-icons/fi';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FiLogOut, FiChevronDown } from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function ClientHeader() {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const user = JSON.parse(localStorage.getItem('user')) || {};
-  const role = localStorage.getItem('role') || 'Client';
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+  const role = localStorage.getItem("role") || "Client";
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('role');
-    navigate('/');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("role");
+    navigate("/");
   };
 
   return (
     <>
       <header className="flex justify-between items-center px-4 h-16 bg-white border-b border-gray-200 shadow-sm">
-        <h1 className="text-lg font-bold text-indigo-700">Client Dashboard</h1>
+        <h1 className="text-lg font-bold text-indigo-700">Employee Dashboard</h1>
 
         <div className="relative">
           <button
@@ -60,9 +60,11 @@ export default function ClientHeader() {
             className="flex items-center gap-2 px-3 py-1.5 bg-indigo-100 hover:bg-indigo-200 rounded-full text-sm transition"
           >
             <div className="w-7 h-7 flex items-center justify-center rounded-full bg-indigo-600 text-white font-semibold text-xs uppercase">
-              {user.name?.[0] || 'C'}
+              {user.name?.[0] || "C"}
             </div>
-            <span className="text-indigo-800 font-medium">{user.name || 'Client'}</span>
+            <span className="text-indigo-800 font-medium">
+              {user.name || "Client"}
+            </span>
             <FiChevronDown className="text-indigo-600 text-sm" />
           </button>
 
@@ -108,8 +110,12 @@ export default function ClientHeader() {
               transition={{ duration: 0.2 }}
               className="bg-white rounded-xl shadow-xl w-[90%] max-w-sm p-5 text-center"
             >
-              <h2 className="text-lg font-semibold text-gray-800 mb-2">Confirm Logout</h2>
-              <p className="text-sm text-gray-600 mb-4">Are you sure you want to logout?</p>
+              <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                Confirm Logout
+              </h2>
+              <p className="text-sm text-gray-600 mb-4">
+                Are you sure you want to logout?
+              </p>
               <div className="flex justify-center gap-3">
                 <button
                   onClick={() => setShowModal(false)}

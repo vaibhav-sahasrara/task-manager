@@ -57,7 +57,7 @@ const ClientReports = () => {
     <div className="space-y-8 ">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
-          Client Reports
+          Employee Reports
         </h1>
         <span className="text-sm text-gray-500">
           Generated for {user?.name}

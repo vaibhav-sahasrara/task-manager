@@ -6,6 +6,7 @@ import TeamMember from "../models/TeamMember.js";
 import Project from "../models/Project.js";
 import { sendMail } from "../utils/mailer.js";
 import { taskAssignedTemplate } from "../utils/templates/taskAssignedTemplate.js";
+import { getIO } from "../socket.js";
 
 // ✅ Create Task
 export const createTask = async (req, res) => {
@@ -89,6 +90,8 @@ export const createTask = async (req, res) => {
           select: "name email",
         },
       });
+    const io = getIO();
+    io.emit("taskCreated", fullTask); // 🚀 Broadcast to all connected clients
 
     res.status(201).json(fullTask);
   } catch (err) {
@@ -177,6 +180,8 @@ export const updateTask = async (req, res) => {
           select: "name email",
         },
       });
+    const io = getIO();
+    io.emit("taskUpdated", updatedTask);
 
     res.json(updatedTask);
   } catch (err) {
@@ -192,6 +197,9 @@ export const deleteTask = async (req, res) => {
   try {
     const deleted = await Task.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ error: "Task not found" });
+    const io = getIO();
+    io.emit("taskDeleted", { taskId: req.params.id });
+
     res.json({ message: "Task deleted" });
   } catch (err) {
     res.status(500).json({ error: "Server error" });
