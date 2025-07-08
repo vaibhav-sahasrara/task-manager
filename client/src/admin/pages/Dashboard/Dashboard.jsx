@@ -28,14 +28,15 @@ export default function Dashboard() {
           axios.get("/api/projects", authHeader),
           axios.get("/api/tasks", authHeader),
           axios.get("/api/team", authHeader),
-          axios.get("/api/tasks/stats", authHeader),
+          axios.get("/api/projects/progress", authHeader),
         ]);
         console.log("Stats data:", statsRes.data);
 
         setProjects(projectRes.data);
         setTasks(taskRes.data);
         setTeam(teamRes.data);
-        setStats(statsRes.data);
+        // setStats(statsRes.data);
+        setStats({ projectProgress: statsRes.data });
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       }

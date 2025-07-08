@@ -1,5 +1,7 @@
 import Project from "../models/Project.js";
 import slugify from "slugify";
+import Task from "../models/Task.js";
+
 
 // Create new project
 export const createProject = async (req, res) => {
@@ -105,6 +107,43 @@ export const getProjectsByUser = async (req, res) => {
     }).populate("owner team", "name email avatar linkedMember");
 
     res.status(200).json(projects);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+
+// Add this to your project controller
+
+
+export const getProjectProgress = async (req, res) => {
+  try {
+    // 1. Get all projects
+    const projects = await Project.find({}, "name");
+
+    // 2. For each project, compute progress
+    const progress = await Promise.all(
+      projects.map(async (project) => {
+        const total = await Task.countDocuments({ project: project._id });
+        const completed = await Task.countDocuments({
+          project: project._id,
+          status: "Completed",
+        });
+
+        const progress = total === 0 ? 0 : Math.round((completed / total) * 100);
+
+        return {
+          projectId: project._id,
+          name: project.name, // ✅ include project name
+          total,
+          completed,
+          progress,
+        };
+      })
+    );
+
+    res.status(200).json(progress);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
