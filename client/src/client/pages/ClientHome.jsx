@@ -1,129 +1,85 @@
-import React, { useEffect, useState } from "react";
-import axios from "../../utils/axiosInstance";
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  FiFolder,
+  FiCheckCircle,
+  FiClock,
+  FiUsers,
+  FiArrowRightCircle,
+} from "react-icons/fi";
+
+const dummyStats = [
+  {
+    title: "Total Projects",
+    value: 12,
+    icon: <FiFolder />,
+    color: "from-purple-500 to-indigo-500",
+  },
+  {
+    title: "Completed Tasks",
+    value: 48,
+    icon: <FiCheckCircle />,
+    color: "from-green-500 to-emerald-500",
+  },
+  {
+    title: "Pending Tasks",
+    value: 7,
+    icon: <FiClock />,
+    color: "from-yellow-500 to-orange-500",
+  },
+  {
+    title: "Team Members",
+    value: 5,
+    icon: <FiUsers />,
+    color: "from-pink-500 to-rose-500",
+  },
+];
 
 const ClientHome = () => {
-  const [projects, setProjects] = useState([]);
-  const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const user = JSON.parse(localStorage.getItem("user"));
-  const userId = user?.id;
-  const memberId = user?.linkedMember?._id;
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!userId || !memberId) return;
-
-      try {
-        const taskRes = await axios.get(
-          `/api/tasks/client-tasks/${userId}`
-        );
-        setTasks(taskRes.data.tasks || []);
-
-        const projectRes = await axios.get(
-          `/api/projects/user/${memberId}`
-        );
-        setProjects(projectRes.data || []);
-      } catch (err) {
-        console.error("Error loading client dashboard:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [userId, memberId]);
-
-  const completedCount = tasks.filter(
-    (task) => task.status.toLowerCase() === "done"
-  ).length;
-  const pendingCount = tasks.filter(
-    (task) => task.status.toLowerCase() !== "done"
-  ).length;
-
-  if (loading) {
-    return (
-      <div className="p-6 text-center text-gray-500 animate-pulse">
-        Loading dashboard...
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
-      <div className="bg-white p-6 rounded-xl shadow">
-        <h1 className="text-xl font-semibold text-gray-800">
-          Welcome, {user?.name || "Client"} 👋
-        </h1>
-        <p className="text-sm text-gray-600 mt-1">
-          Here’s your current work overview.
-        </p>
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">Welcome back 👋</h2>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {dummyStats.map((stat, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className={`bg-gradient-to-r ${stat.color} text-white p-5 rounded-xl shadow-md flex items-center justify-between`}
+          >
+            <div>
+              <p className="text-sm font-medium">{stat.title}</p>
+              <h3 className="text-2xl font-bold mt-1">{stat.value}</h3>
+            </div>
+            <div className="text-3xl opacity-70">{stat.icon}</div>
+          </motion.div>
+        ))}
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid gap-6 md:grid-cols-3">
-        <SummaryCard
-          icon="📁"
-          label="Active Projects"
-          value={projects.length}
-          color="blue"
-        />
-        <SummaryCard
-          icon="✅"
-          label="Tasks Completed"
-          value={completedCount}
-          color="green"
-        />
-        <SummaryCard
-          icon="⏳"
-          label="Pending Tasks"
-          value={pendingCount}
-          color="yellow"
-        />
-      </div>
-
-      {/* Recent Updates */}
-      <div className="bg-white p-6 rounded-xl shadow">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">
-          Your Recent Updates
-        </h2>
-        <ul className="space-y-3 text-sm text-gray-700">
-          {tasks.slice(0, 3).map((task) => (
-            <li key={task._id} className="flex items-center gap-2">
-              <span className="text-indigo-500">📝</span>
-              <span>
-                Task <strong>{task.name}</strong> on project{" "}
-                <strong>{task.project?.name}</strong> is currently{" "}
-                <span className="capitalize">{task.status}</span>
-              </span>
-            </li>
+      {/* Recent Activity (dummy) */}
+      <div className="mt-8">
+        <h3 className="text-lg font-semibold text-gray-700 mb-3">
+          Recent Activity
+        </h3>
+        <div className="bg-white rounded-xl shadow p-4 space-y-3">
+          {[
+            "You were assigned a new task: 'Design Login Page'",
+            "Project 'Marketing Site' marked as completed",
+            "3 new comments on 'Dashboard UI'",
+            "You joined the 'Website Revamp' team",
+          ].map((activity, idx) => (
+            <div
+              key={idx}
+              className="flex items-center justify-between text-sm text-gray-600"
+            >
+              <span>{activity}</span>
+              <FiArrowRightCircle className="text-indigo-500" />
+            </div>
           ))}
-          {tasks.length === 0 && (
-            <li className="text-gray-400">No recent task activity found.</li>
-          )}
-        </ul>
-      </div>
-    </div>
-  );
-};
-
-const SummaryCard = ({ icon, label, value, color }) => {
-  const colorMap = {
-    blue: "bg-blue-100 text-blue-600",
-    green: "bg-green-100 text-green-600",
-    yellow: "bg-yellow-100 text-yellow-600",
-  };
-
-  return (
-    <div
-      className={`flex items-center gap-4 p-4 bg-white rounded-xl shadow hover:shadow-md transition`}
-    >
-      <div className={`${colorMap[color]} p-3 rounded-full text-lg`}>
-        {icon}
-      </div>
-      <div>
-        <div className="text-sm text-gray-500">{label}</div>
-        <div className="text-xl font-semibold text-gray-800">{value}</div>
+        </div>
       </div>
     </div>
   );

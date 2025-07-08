@@ -10,7 +10,7 @@ import {
   FiFlag,
 } from "react-icons/fi";
 
-const ClientTasks = () => {
+const EmployeeTasks = () => {
   const [tasks, setTasks] = useState([]);
   const [assignedTo, setAssignedTo] = useState("");
   const user = JSON.parse(localStorage.getItem("user"));
@@ -136,4 +136,4 @@ const ClientTasks = () => {
   );
 };
 
-export default ClientTasks;
+export default EmployeeTasks;

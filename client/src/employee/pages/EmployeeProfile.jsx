@@ -10,7 +10,7 @@ import {
   FiUserCheck,
 } from "react-icons/fi";
 
-const ClientProfile = () => {
+const EmployeeProfile = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const member = user?.linkedMember;
 
@@ -98,4 +98,4 @@ const ClientProfile = () => {
   );
 };
 
-export default ClientProfile;
+export default EmployeeProfile;
