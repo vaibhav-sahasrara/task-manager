@@ -9,6 +9,7 @@ import Filters from "./Filters";
 import { groupTasksByStatus, normalizeAssignees } from "./utils";
 import axios from "../../../utils/axiosInstance";
 import { useSocket } from "../../../context/SocketContext";
+import ConfirmModal from "../../components/common/ConfirmModal";
 
 const TaskManager = () => {
   const { socket } = useSocket();
@@ -18,6 +19,10 @@ const TaskManager = () => {
   const [showModal, setShowModal] = useState(false);
   const [editTaskData, setEditTaskData] = useState(null);
   const [viewMode, setViewMode] = useState("kanban");
+
+  const [showConfirm, setShowConfirm] = useState(false);
+const [taskToDelete, setTaskToDelete] = useState(null);
+
 
   const token = localStorage.getItem("token");
   const config = { headers: { Authorization: `Bearer ${token}` } };
@@ -197,9 +202,15 @@ const TaskManager = () => {
         {viewMode === "kanban" ? (
           <KanbanView
             groupedTasks={groupedByStatus}
-            onEdit={setEditTaskData}
-            onDelete={deleteTask}
-            // openModal={() => setShowModal(true)}
+            onEdit={onEditWithTeam}
+            // onEdit={setEditTaskData}
+            // onDelete={deleteTask}
+            onDelete={(id) => {
+  setTaskToDelete(id);
+  setShowConfirm(true);
+}}
+
+            openModal={() => setShowModal(true)}
           />
         ) : (
           <TableView tasks={filteredTasks} />
@@ -217,6 +228,22 @@ const TaskManager = () => {
           teamMembers={teamMembers}
         />
       )}
+
+      {showConfirm && (
+  <ConfirmModal
+    isOpen={showConfirm}
+    onClose={() => {
+      setShowConfirm(false);
+      setTaskToDelete(null);
+    }}
+    onConfirm={() => {
+      if (taskToDelete) deleteTask(taskToDelete);
+    }}
+    title="Delete Task"
+    message="Are you sure you want to delete this task? This action cannot be undone."
+  />
+)}
+
     </div>
   );
 };

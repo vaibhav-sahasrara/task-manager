@@ -52,13 +52,20 @@ const TaskCard = ({
         <h3 className="text-lg font-semibold text-gray-800">{task.name}</h3>
         <div className="flex gap-2">
           <button
-            onClick={onEdit}
+            onClick={(e) => {
+              e.stopPropagation(); // 🔧 stop card click
+              onEdit();
+            }}
             className="text-blue-500 hover:text-blue-700 transition"
           >
             <FiEdit size={16} />
           </button>
+
           <button
-            onClick={onDelete}
+            onClick={(e) => {
+              e.stopPropagation(); // 🔧 stop card click
+              onDelete();
+            }}
             className="text-red-500 hover:text-red-700 transition"
           >
             <FiTrash2 size={16} />
