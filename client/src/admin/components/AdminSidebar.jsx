@@ -21,7 +21,7 @@ export default function AdminSidebar({ isOpen, toggleSidebar }) {
       icon: <FiUserCheck />,
     },
 
-     {
+    {
       path: "/admin/all-users",
       label: "All Users",
       icon: <FiUserCheck />,
@@ -30,18 +30,18 @@ export default function AdminSidebar({ isOpen, toggleSidebar }) {
 
   return (
     <aside
-      className={`fixed top-0 left-0 h-screen bg-white/90 backdrop-blur-md border-r shadow-md z-40 transition-all duration-300 flex flex-col ${
+      className={`fixed top-0 left-0 h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 backdrop-blur-md border-r dark:border-gray-700 shadow-md z-40 transition-all duration-300 flex flex-col ${
         isOpen ? "w-60" : "w-16"
       }`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 h-16 border-b border-gray-200">
-        <span className="text-lg font-bold text-indigo-700 tracking-tight whitespace-nowrap">
+      <div className="flex items-center justify-between px-4 h-16 border-b border-gray-200 dark:border-gray-700">
+        <span className="text-lg font-bold text-indigo-700 dark:text-yellow-300 tracking-tight whitespace-nowrap">
           {isOpen ? "Sahasrara Metatech" : "S"}
         </span>
         <button
           onClick={toggleSidebar}
-          className="text-indigo-600 hover:text-indigo-800 transition text-xl"
+          className="text-indigo-600 hover:text-indigo-800 dark:text-yellow-300 transition text-xl"
         >
           {isOpen ? <GoSidebarCollapse /> : <GoSidebarExpand />}
         </button>
@@ -58,8 +58,8 @@ export default function AdminSidebar({ isOpen, toggleSidebar }) {
               className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-all duration-150 group mx-1
               ${
                 isActive
-                  ? "bg-indigo-100 text-indigo-700 font-semibold"
-                  : "text-gray-600 hover:bg-indigo-50 hover:text-indigo-700"
+                  ? "bg-indigo-100 dark:bg-gray-800 text-indigo-700 dark:text-yellow-300 font-semibold"
+                  : "text-gray-600 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-gray-700 hover:text-indigo-700 dark:hover:text-yellow-300"
               }`}
             >
               <span className="text-lg">{item.icon}</span>

@@ -52,8 +52,10 @@ import ClientSidebar from "../client/components/ClientSidebar"; // ✅ Fixed
 import AdminHeader from "../admin/components/AdminHeader";
 import EmployeeHeader from "../employee/components/EmployeeHeader";
 import ClientHeader from "../client/components/ClientHeader"; // ✅ Fixed
+import useDarkMode from "../utils/useDarkMode";
 
 export default function Layout() {
+  const [darkMode] = useDarkMode();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -98,7 +100,8 @@ export default function Layout() {
   }
 
   return (
-    <div className="flex">
+    // <div className={darkMode ? "dark" : ""}>
+    <div className="flex bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
       {Sidebar && (
         <Sidebar
           isOpen={isSidebarOpen}
@@ -112,10 +115,11 @@ export default function Layout() {
         }`}
       >
         {Header && <Header />}
-        <main className="p-4">
+        <main className="p-4 bg-gray-100 dark:bg-gray-800 min-h-[calc(100vh-4rem)]">
           <Outlet />
         </main>
       </div>
     </div>
+    // </div>
   );
 }

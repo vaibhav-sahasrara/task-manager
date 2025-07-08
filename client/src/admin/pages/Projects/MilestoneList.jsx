@@ -1,4 +1,43 @@
-// MilestoneList.jsx
+// // MilestoneList.jsx
+// import React from "react";
+
+// const MilestoneList = ({ milestones = [] }) => {
+//   if (!milestones.length) return null;
+
+//   return (
+//     <div className="mt-4">
+//       <h3 className="text-md font-semibold text-gray-700 mb-2">Milestones:</h3>
+//       <ul className="space-y-2">
+//         {milestones.map((m) => (
+//           <li key={m._id} className="p-3 rounded-lg bg-gray-50 shadow-sm">
+//             <div className="flex justify-between items-center">
+//               <div>
+//                 <p className="font-medium">{m.title}</p>
+//                 <p className="text-sm text-gray-600">{m.description}</p>
+//                 <p className="text-xs text-gray-500">
+//                   Due: {new Date(m.dueDate).toLocaleDateString("en-GB")}
+//                 </p>
+//               </div>
+//               <span
+//                 className={`text-xs font-semibold px-2 py-1 rounded ${
+//                   m.completed
+//                     ? "bg-green-100 text-green-800"
+//                     : "bg-yellow-100 text-yellow-800"
+//                 }`}
+//               >
+//                 {m.completed ? "Completed" : "Pending"}
+//               </span>
+//             </div>
+//           </li>
+//         ))}
+//       </ul>
+//     </div>
+//   );
+// };
+
+// export default MilestoneList;
+
+
 import React from "react";
 
 const MilestoneList = ({ milestones = [] }) => {
@@ -6,23 +45,30 @@ const MilestoneList = ({ milestones = [] }) => {
 
   return (
     <div className="mt-4">
-      <h3 className="text-md font-semibold text-gray-700 mb-2">Milestones:</h3>
+      <h3 className="text-md font-semibold text-gray-700 dark:text-gray-200 mb-2">
+        Milestones:
+      </h3>
       <ul className="space-y-2">
         {milestones.map((m) => (
-          <li key={m._id} className="p-3 rounded-lg bg-gray-50 shadow-sm">
+          <li
+            key={m._id}
+            className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm"
+          >
             <div className="flex justify-between items-center">
               <div>
-                <p className="font-medium">{m.title}</p>
-                <p className="text-sm text-gray-600">{m.description}</p>
-                <p className="text-xs text-gray-500">
+                <p className="font-medium text-gray-800 dark:text-gray-100">
+                  {m.title}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{m.description}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   Due: {new Date(m.dueDate).toLocaleDateString("en-GB")}
                 </p>
               </div>
               <span
-                className={`text-xs font-semibold px-2 py-1 rounded ${
+                className={`text-xs font-semibold px-2 py-1 rounded-full ${
                   m.completed
-                    ? "bg-green-100 text-green-800"
-                    : "bg-yellow-100 text-yellow-800"
+                    ? "bg-green-100 text-green-800 dark:bg-green-700 dark:text-white"
+                    : "bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-white"
                 }`}
               >
                 {m.completed ? "Completed" : "Pending"}

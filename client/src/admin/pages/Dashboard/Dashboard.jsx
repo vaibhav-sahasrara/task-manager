@@ -1,5 +1,186 @@
+// import React, { useEffect, useState } from "react";
+// // import axios from "axios";
+// import axios from "../../../utils/axiosInstance";
+// import StatsCards from "./StatsCards";
+// import ProjectProgress from "./ProjectProgress";
+// import OverdueTasks from "./OverdueTasks";
+// import UpcomingDeadlines from "./UpcomingDeadlines";
+// import RecentActivity from "./RecentActivity";
+
+// export default function Dashboard() {
+//   const [projects, setProjects] = useState([]);
+//   const [tasks, setTasks] = useState([]);
+//   const [team, setTeam] = useState([]);
+//   const [stats, setStats] = useState(null);
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const token = localStorage.getItem("token");
+
+//         const authHeader = {
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//           },
+//         };
+
+//         const [projectRes, taskRes, teamRes, statsRes] = await Promise.all([
+//           axios.get("/api/projects", authHeader),
+//           axios.get("/api/tasks", authHeader),
+//           axios.get("/api/team", authHeader),
+//           axios.get("/api/projects/progress", authHeader),
+//         ]);
+//         console.log("Stats data:", statsRes.data);
+
+//         setProjects(projectRes.data);
+//         setTasks(taskRes.data);
+//         setTeam(teamRes.data);
+//         // setStats(statsRes.data);
+//         setStats({ projectProgress: statsRes.data });
+//       } catch (error) {
+//         console.error("Error fetching dashboard data:", error);
+//       }
+//     };
+
+//     fetchData();
+//   }, []);
+
+//   const getPriorityBadge = (priority) => {
+//     const baseClass =
+//       "text-xs font-semibold px-2 py-1 rounded-full shadow-sm tracking-wide";
+//     switch (priority) {
+//       case "High":
+//         return (
+//           <span className={`${baseClass} bg-red-100 text-red-700`}>High</span>
+//         );
+//       case "Medium":
+//         return (
+//           <span className={`${baseClass} bg-yellow-100 text-yellow-700`}>
+//             Medium
+//           </span>
+//         );
+//       case "Low":
+//         return (
+//           <span className={`${baseClass} bg-green-100 text-green-700`}>
+//             Low
+//           </span>
+//         );
+//       default:
+//         return null;
+//     }
+//   };
+
+//   return (
+//     <div className="space-y-6">
+//       <StatsCards projects={projects} tasks={tasks} team={team} stats={stats} />
+//       <ProjectProgress stats={stats} />
+//       <OverdueTasks stats={stats} />
+
+//       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//         <UpcomingDeadlines stats={stats} getPriorityBadge={getPriorityBadge} />
+//         <RecentActivity recentActivities={tasks.slice(0, 5)} />
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
+// import React, { useEffect, useState } from "react";
+// import axios from "../../../utils/axiosInstance";
+// import StatsCards from "./StatsCards";
+// import ProjectProgress from "./ProjectProgress";
+// import OverdueTasks from "./OverdueTasks";
+// import UpcomingDeadlines from "./UpcomingDeadlines";
+// import RecentActivity from "./RecentActivity";
+
+// export default function Dashboard() {
+//   const [projects, setProjects] = useState([]);
+//   const [tasks, setTasks] = useState([]);
+//   const [team, setTeam] = useState([]);
+//   const [stats, setStats] = useState(null);
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const token = localStorage.getItem("token");
+
+//         const authHeader = {
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//           },
+//         };
+
+//         const [projectRes, taskRes, teamRes, statsRes] = await Promise.all([
+//           axios.get("/api/projects", authHeader),
+//           axios.get("/api/tasks", authHeader),
+//           axios.get("/api/team", authHeader),
+//           axios.get("/api/projects/progress", authHeader),
+//         ]);
+
+//         setProjects(projectRes.data);
+//         setTasks(taskRes.data);
+//         setTeam(teamRes.data);
+//         setStats({ projectProgress: statsRes.data });
+//       } catch (error) {
+//         console.error("Error fetching dashboard data:", error);
+//       }
+//     };
+
+//     fetchData();
+//   }, []);
+
+//   const getPriorityBadge = (priority) => {
+//     const baseClass =
+//       "text-xs font-semibold px-2 py-1 rounded-full shadow-sm tracking-wide";
+//     switch (priority) {
+//       case "High":
+//         return (
+//           <span className={`${baseClass} bg-red-100 text-red-700 dark:bg-red-800 dark:text-red-200`}>
+//             High
+//           </span>
+//         );
+//       case "Medium":
+//         return (
+//           <span className={`${baseClass} bg-yellow-100 text-yellow-700 dark:bg-yellow-800 dark:text-yellow-200`}>
+//             Medium
+//           </span>
+//         );
+//       case "Low":
+//         return (
+//           <span className={`${baseClass} bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-200`}>
+//             Low
+//           </span>
+//         );
+//       default:
+//         return null;
+//     }
+//   };
+
+//   return (
+//     <div className="space-y-6 text-gray-800 dark:text-gray-100">
+//       <StatsCards
+//         projects={projects}
+//         tasks={tasks}
+//         team={team}
+//         stats={stats}
+//       />
+//       <ProjectProgress stats={stats} />
+//       <OverdueTasks stats={stats} />
+//       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//         <UpcomingDeadlines
+//           stats={stats}
+//           getPriorityBadge={getPriorityBadge}
+//         />
+//         <RecentActivity recentActivities={tasks.slice(0, 5)} />
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
 import React, { useEffect, useState } from "react";
-// import axios from "axios";
 import axios from "../../../utils/axiosInstance";
 import StatsCards from "./StatsCards";
 import ProjectProgress from "./ProjectProgress";
@@ -17,7 +198,6 @@ export default function Dashboard() {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
-
         const authHeader = {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -30,12 +210,10 @@ export default function Dashboard() {
           axios.get("/api/team", authHeader),
           axios.get("/api/projects/progress", authHeader),
         ]);
-        console.log("Stats data:", statsRes.data);
 
         setProjects(projectRes.data);
         setTasks(taskRes.data);
         setTeam(teamRes.data);
-        // setStats(statsRes.data);
         setStats({ projectProgress: statsRes.data });
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -51,17 +229,19 @@ export default function Dashboard() {
     switch (priority) {
       case "High":
         return (
-          <span className={`${baseClass} bg-red-100 text-red-700`}>High</span>
+          <span className={`${baseClass} bg-red-100 text-red-700 dark:bg-red-800 dark:text-red-200`}>
+            High
+          </span>
         );
       case "Medium":
         return (
-          <span className={`${baseClass} bg-yellow-100 text-yellow-700`}>
+          <span className={`${baseClass} bg-yellow-100 text-yellow-700 dark:bg-yellow-800 dark:text-yellow-200`}>
             Medium
           </span>
         );
       case "Low":
         return (
-          <span className={`${baseClass} bg-green-100 text-green-700`}>
+          <span className={`${baseClass} bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-200`}>
             Low
           </span>
         );
@@ -71,11 +251,10 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 bg-white dark:bg-[#0a0f1c] p-4 rounded-xl transition-colors duration-300 text-gray-800 dark:text-gray-100">
       <StatsCards projects={projects} tasks={tasks} team={team} stats={stats} />
       <ProjectProgress stats={stats} />
       <OverdueTasks stats={stats} />
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <UpcomingDeadlines stats={stats} getPriorityBadge={getPriorityBadge} />
         <RecentActivity recentActivities={tasks.slice(0, 5)} />
