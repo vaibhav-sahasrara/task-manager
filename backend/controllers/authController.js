@@ -25,49 +25,6 @@ export const register = async (req, res) => {
   }
 };
 
-// export const login = async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-
-//     // const user = await User.findOne({ email });
-
-//     const user = await User.findOne({ email }).populate(
-//       "linkedMember",
-//       "name email"
-//     );
-//     if (!user) return res.status(401).json({ error: "Invalid credentials" });
-
-//     const isMatch = await bcrypt.compare(password, user.password);
-//     if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
-
-//     // Check approval status
-//     if (!user.isApproved) {
-//       return res.status(403).json({
-//         error: "Your account is pending admin approval. Please wait.",
-//       });
-//     }
-
-//     const token = jwt.sign(
-//       { id: user._id, role: user.role },
-//       process.env.JWT_SECRET,
-//       { expiresIn: "7d" }
-//     );
-
-//     res.json({
-//       token,
-//       user: {
-//         id: user._id,
-//         name: user.name,
-//         email: user.email,
-//         role: user.role,
-//         linkedMember: user.linkedMember,
-//       },
-//     });
-//   } catch (err) {
-//     res.status(500).json({ error: "Login failed" });
-//   }
-// };
-
 // GET /api/users/clients
 
 export const login = async (req, res) => {
@@ -83,6 +40,13 @@ export const login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
 
+      // ❌ Block deactivated users
+    if (!user.isActive) {
+      return res.status(403).json({
+        error: "Your account has been deactivated. Please contact admin.",
+      });
+    }
+    
     // Check approval status
     if (!user.isApproved) {
       return res.status(403).json({

@@ -110,3 +110,27 @@ export const approveUserAndCreateProfile = async (req, res) => {
     res.status(500).json({ error: "Failed to approve and create profile" });
   }
 };
+
+
+export const toggleUserStatus = async (req, res) => {
+  const { userId } = req.params;
+  const { isActive } = req.body;
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { isActive },
+      { new: true }
+    );
+
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    res.status(200).json({
+      message: `User account ${isActive ? "activated" : "deactivated"} successfully`,
+      user,
+    });
+  } catch (err) {
+    console.error("❌ Failed to update user status:", err);
+    res.status(500).json({ error: "Failed to update user status" });
+  }
+};

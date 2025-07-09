@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
@@ -7,13 +7,14 @@ const userSchema = new mongoose.Schema(
     password: String,
     role: {
       type: String,
-      enum: ['admin', 'employee','client'],
-      default: 'employee',
+      enum: ["admin", "employee", "client"],
+      default: "employee",
     },
     isApproved: { type: Boolean, default: false },
-    linkedMember: { type: mongoose.Schema.Types.ObjectId, ref: 'TeamMember' }
+    isActive: { type: Boolean, default: true },
+    linkedMember: { type: mongoose.Schema.Types.ObjectId, ref: "TeamMember" },
   },
   { timestamps: true }
 );
 
-export default mongoose.model('User', userSchema);
+export default mongoose.model("User", userSchema);

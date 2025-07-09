@@ -47,8 +47,9 @@ import {
   getPendingUsers,
   approveUser,
   approveUserAndCreateProfile,
+  toggleUserStatus,
 } from '../../controllers/admin/adminController.js';
-import { verifyToken, verifyAdmin } from '../../middleware/auth.js';
+import { verifyToken,auth, verifyAdmin } from '../../middleware/auth.js';
 import User from '../../models/User.js'; // ✅ Required import
 
 const router = express.Router();
@@ -58,6 +59,9 @@ router.get('/pending-users', verifyToken, verifyAdmin, getPendingUsers);
 
 // ✅ Approve user only
 router.put('/approve-user/:id', verifyToken, verifyAdmin, approveUser);
+
+router.patch("/user-status/:userId",auth, verifyAdmin, toggleUserStatus);
+
 
 // ✅ Approve and create team member profile
 router.post(
