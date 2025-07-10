@@ -2,6 +2,8 @@ import { FiHome, FiClipboard, FiUsers, FiUserCheck } from "react-icons/fi";
 import { GoSidebarExpand, GoSidebarCollapse } from "react-icons/go";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+// import { FiUsers } from "react-icons/fi";
+
 
 export default function AdminSidebar({ isOpen, toggleSidebar }) {
   const location = useLocation();
@@ -24,7 +26,7 @@ export default function AdminSidebar({ isOpen, toggleSidebar }) {
     {
       path: "/admin/all-users",
       label: "All Users",
-      icon: <FiUserCheck />,
+      icon: <FiUsers />,
     },
   ];
 
@@ -37,7 +39,7 @@ export default function AdminSidebar({ isOpen, toggleSidebar }) {
       {/* Header */}
       <div className="flex items-center justify-between px-4 h-16 border-b border-gray-200 dark:border-gray-700">
         <span className="text-lg font-bold text-indigo-700 dark:text-yellow-300 tracking-tight whitespace-nowrap">
-          {isOpen ? "Sahasrara Metatech" : "S"}
+          {isOpen ? "Sahasrara Metatech" : ""}
         </span>
         <button
           onClick={toggleSidebar}

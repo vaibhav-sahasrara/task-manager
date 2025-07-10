@@ -8,7 +8,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import useDarkMode from "../../utils/useDarkMode"; // adjust path as needed
 import useNotifications from "../../hooks/useNotifications";
 import { useContext } from "react";
+// import { useNavigate } from "react-router-dom";
 // import { NotificationContext } from "../../context/NotificationContext";
+import NotificationDropdown from "./common/NotificationDropdown"; // adjust the path
 
 // import { useEffect, useRef } from "react";
 import { toast } from "react-toastify";
@@ -101,54 +103,17 @@ export default function AdminHeader() {
             </button>
 
             {/* ▾ Notification Dropdown ▾ */}
-            <AnimatePresence>
-              {notifOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.15 }}
-                  className="absolute right-1 mt-1 w-80 max-h-96 overflow-y-auto
-                 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
-                 rounded-xl shadow-lg z-50"
-                >
-                  {all.length === 0 ? (
-                    <div className="p-4 text-sm text-gray-500 text-center">
-                      No notifications
-                    </div>
-                  ) : (
-                    <>
-                      {/* Unread Notifications */}
-                      {unread.map((n) => (
-                        <div
-                          key={n._id}
-                          className="px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                          onClick={() => markNotificationAsRead(n._id)}
-                        >
-                          <span className="font-semibold text-indigo-700 dark:text-yellow-300">
-                            🔔 {n.message}
-                          </span>
-                        </div>
-                      ))}
-
-                      {unread.length > 0 && read.length > 0 && (
-                        <div className="h-px bg-gray-200 dark:bg-gray-700 my-1" />
-                      )}
-
-                      {/* Read Notifications */}
-                      {read.map((n) => (
-                        <div
-                          key={n._id}
-                          className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400"
-                        >
-                          ✅ {n.message}
-                        </div>
-                      ))}
-                    </>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <NotificationDropdown
+              notifOpen={notifOpen}
+              unread={unread}
+              read={read}
+              all={all}
+              markNotificationAsRead={markNotificationAsRead}
+              onViewAll={() => {
+                setNotifOpen(false); // close dropdown
+                navigate("/admin/notifications");
+              }}
+            />
           </div>
 
           <button

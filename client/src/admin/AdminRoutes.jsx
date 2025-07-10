@@ -11,6 +11,7 @@ import TaskManager from "./pages/TaskManager/TaskManager";
 import PendingUsers from "./pages/PendingUsers";
 import TaskDetailPage from "./pages/TaskManager/TaskDetailPage";
 import AllUsers from "./pages/Users/AllUsers";
+import NotificationPage from "./components/NotificationPage";
 
 const AdminRoutes = () => {
   return (
@@ -21,6 +22,7 @@ const AdminRoutes = () => {
         <Route path="team" element={<Team />} />
         {/* <Route path="tasks-manager" element={<TaskManager />} /> */}
         <Route path="tasks/:id" element={<TaskDetailPage />} />
+        <Route path="/notifications" element={<NotificationPage />} />
 
         <Route path="tasks" element={<TaskManager />} />
         <Route path="tasks-manager" element={<Team />} />
