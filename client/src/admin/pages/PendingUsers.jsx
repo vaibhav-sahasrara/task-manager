@@ -104,7 +104,6 @@
 
 // export default PendingUsers;
 
-
 import React, { useEffect, useState } from "react";
 import axios from "../../utils/axiosInstance";
 import { FiUserCheck, FiMail } from "react-icons/fi";
@@ -153,10 +152,10 @@ const PendingUsers = () => {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold text-indigo-700 dark:text-indigo-400 mb-4">
+    <div className="space-y-8">
+      <h1 className="text-2xl font-bold text-gray-700 dark:text-gray-200">
         Pending Users
-      </h2>
+      </h1>
 
       {users.length === 0 ? (
         <div className="text-center text-gray-500 dark:text-gray-400">

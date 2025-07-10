@@ -377,6 +377,8 @@ const TaskManager = () => {
         payload,
         config
       );
+      console.log("▶️ Payload being sent:", payload);
+
       const updated = {
         ...res.data,
         assignees: normalizeAssignees(res.data.assignees, teamMembers),

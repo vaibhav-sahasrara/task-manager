@@ -84,8 +84,6 @@
 //   );
 // }
 
-
-
 // import React, { useEffect, useState } from "react";
 // import axios from "../../../utils/axiosInstance";
 // import StatsCards from "./StatsCards";
@@ -178,8 +176,6 @@
 //   );
 // }
 
-
-
 import React, { useEffect, useState } from "react";
 import axios from "../../../utils/axiosInstance";
 import StatsCards from "./StatsCards";
@@ -229,19 +225,25 @@ export default function Dashboard() {
     switch (priority) {
       case "High":
         return (
-          <span className={`${baseClass} bg-red-100 text-red-700 dark:bg-red-800 dark:text-red-200`}>
+          <span
+            className={`${baseClass} bg-red-100 text-red-700 dark:bg-red-800 dark:text-red-200`}
+          >
             High
           </span>
         );
       case "Medium":
         return (
-          <span className={`${baseClass} bg-yellow-100 text-yellow-700 dark:bg-yellow-800 dark:text-yellow-200`}>
+          <span
+            className={`${baseClass} bg-yellow-100 text-yellow-700 dark:bg-yellow-800 dark:text-yellow-200`}
+          >
             Medium
           </span>
         );
       case "Low":
         return (
-          <span className={`${baseClass} bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-200`}>
+          <span
+            className={`${baseClass} bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-200`}
+          >
             Low
           </span>
         );

@@ -53,6 +53,7 @@ import AdminHeader from "../admin/components/AdminHeader";
 import EmployeeHeader from "../employee/components/EmployeeHeader";
 import ClientHeader from "../client/components/ClientHeader"; // ✅ Fixed
 import useDarkMode from "../utils/useDarkMode";
+import NotificationHandler from "../admin/components/common/NotificationHandler";
 
 export default function Layout() {
   const [darkMode] = useDarkMode();
@@ -115,6 +116,7 @@ export default function Layout() {
         }`}
       >
         {Header && <Header />}
+        {(role === "admin" || role === "employee") && <NotificationHandler />}
         <main className="p-4 bg-gray-100 dark:bg-gray-800 min-h-[calc(100vh-4rem)]">
           <Outlet />
         </main>

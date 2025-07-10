@@ -20,9 +20,7 @@ const EmployeeTasks = () => {
     const fetchTasks = async () => {
       if (!memberId) return;
       try {
-        const res = await axios.get(
-          `/api/tasks?assigneeId=${memberId}`
-        );
+        const res = await axios.get(`/api/tasks?assigneeId=${memberId}`);
         setTasks(res.data);
         setAssignedTo(user.name);
       } catch (err) {
@@ -34,31 +32,39 @@ const EmployeeTasks = () => {
 
   const handleStatusChange = async (taskId, newStatus) => {
     try {
-      await axios.put(`/api/tasks/${taskId}`, {
-        status: newStatus,
-      });
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `/api/tasks/${taskId}`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } } // 👈 send it
+      );
 
       setTasks((prev) =>
         prev.map((t) => (t._id === taskId ? { ...t, status: newStatus } : t))
       );
     } catch (err) {
-      console.error("Failed to update status", err);
+      // console.error("Failed to update status", err);
+      console.error(
+        "Failed to update status",
+        err.response?.data || err.message
+      );
     }
   };
 
   const getPriorityColor = (priority) => {
-    return {
-      High: "bg-red-500 text-white",
-      Medium: "bg-yellow-300 text-gray-800",
-      Low: "bg-green-400 text-white",
-    }[priority] || "bg-gray-300";
+    return (
+      {
+        High: "bg-red-500 text-white",
+        Medium: "bg-yellow-300 text-gray-800",
+        Low: "bg-green-400 text-white",
+      }[priority] || "bg-gray-300"
+    );
   };
 
   return (
     <div className=" space-y-6">
       <h1 className="text-2xl font-bold text-indigo-700 mb-8 flex items-center gap-3">
-       
-        Tasks Assigned  
+        Tasks Assigned
       </h1>
 
       {tasks.length === 0 ? (

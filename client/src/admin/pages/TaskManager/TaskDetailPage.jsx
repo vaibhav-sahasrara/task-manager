@@ -139,8 +139,6 @@
 
 // export default TaskDetailPage;
 
-
-
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "../../../utils/axiosInstance";
@@ -169,7 +167,9 @@ const TaskDetailPage = () => {
   }, [id]);
 
   if (!task)
-    return <div className="p-10 text-center dark:text-gray-300">Loading task...</div>;
+    return (
+      <div className="p-10 text-center dark:text-gray-300">Loading task...</div>
+    );
 
   const formatDate = (d) => new Date(d).toLocaleDateString("en-GB");
 

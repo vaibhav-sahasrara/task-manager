@@ -1,19 +1,40 @@
-import { useState } from "react";
+// import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiLogOut, FiChevronDown } from "react-icons/fi";
+// import { FiLogOut, FiChevronDown } from "react-icons/fi";
+import { FiLogOut, FiChevronDown, FiSun, FiMoon } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiSun, FiMoon } from "react-icons/fi";
+// import { FiSun, FiMoon } from "react-icons/fi";
 import useDarkMode from "../../utils/useDarkMode"; // adjust path as needed
+import useNotifications from "../../hooks/useNotifications";
+import { useContext } from "react";
+// import { NotificationContext } from "../../context/NotificationContext";
+
+// import { useEffect, useRef } from "react";
+import { toast } from "react-toastify";
 
 export default function AdminHeader() {
+  const notifications = useNotifications();
+  // const { notifications } = useContext(NotificationContext);
+  // const seen = useRef(new Set());
   const [darkMode, setDarkMode] = useDarkMode();
 
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  // const { unread, read, all, markNotificationAsRead } = useNotifications();
+  // const [dropdownOpen, setDropdownOpen] = useState(false);
+  // const [showModal,   setShowModal]     = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  // const [menuOpen, setMenuOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem("user")) || {};
   const role = localStorage.getItem("role") || "Admin";
+  // const unread = notifications.filter((n) => !n.isRead);
+  // const read = notifications.filter((n) => n.isRead);
+
+  const { unread, read, all, markNotificationAsRead } = useNotifications();
+  // const [notifOpen, setNotifOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -22,12 +43,114 @@ export default function AdminHeader() {
     navigate("/");
   };
 
+  /* ---------- toast only for NEW items ---------- */
+  const seen = useRef(new Set());
+  useEffect(() => {
+    unread.forEach((n) => {
+      if (!seen.current.has(n._id)) {
+        toast.info(n.message);
+        seen.current.add(n._id);
+      }
+    });
+  }, [unread]);
+
+  // useEffect(() => {
+  //   all.forEach((n) => {
+  //     if (!seen.current.has(n._id)) {
+  //       toast.info(n.message);
+  //       seen.current.add(n._id);
+  //     }
+  //   });
+  // }, [all]);
+
   return (
     <>
       <header className="flex justify-between items-center px-4 h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors">
-        <h1 className="text-lg font-bold text-indigo-700 dark:text-yellow-300">Admin Panel</h1>
+        <h1 className="text-lg font-bold text-indigo-700 dark:text-yellow-300">
+          Admin Panel
+        </h1>
 
         <div className="flex items-center gap-4">
+          <div className="relative">
+            <button
+              onClick={() => setNotifOpen((p) => !p)}
+              className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              <svg
+                className="w-6 h-6 text-gray-600 dark:text-gray-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159
+                         c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                />
+              </svg>
+              {unread.length > 0 && (
+                <span
+                  className="absolute -top-1 -right-1 bg-red-500 text-white
+                                 text-xs px-1.5 rounded-full"
+                >
+                  {unread.length}
+                </span>
+              )}
+            </button>
+
+            {/* ▾ Notification Dropdown ▾ */}
+            <AnimatePresence>
+              {notifOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute right-1 mt-1 w-80 max-h-96 overflow-y-auto
+                 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700
+                 rounded-xl shadow-lg z-50"
+                >
+                  {all.length === 0 ? (
+                    <div className="p-4 text-sm text-gray-500 text-center">
+                      No notifications
+                    </div>
+                  ) : (
+                    <>
+                      {/* Unread Notifications */}
+                      {unread.map((n) => (
+                        <div
+                          key={n._id}
+                          className="px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                          onClick={() => markNotificationAsRead(n._id)}
+                        >
+                          <span className="font-semibold text-indigo-700 dark:text-yellow-300">
+                            🔔 {n.message}
+                          </span>
+                        </div>
+                      ))}
+
+                      {unread.length > 0 && read.length > 0 && (
+                        <div className="h-px bg-gray-200 dark:bg-gray-700 my-1" />
+                      )}
+
+                      {/* Read Notifications */}
+                      {read.map((n) => (
+                        <div
+                          key={n._id}
+                          className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400"
+                        >
+                          ✅ {n.message}
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           <button
             onClick={() => setDarkMode(!darkMode)}
             className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition"

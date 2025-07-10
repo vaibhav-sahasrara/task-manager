@@ -7,16 +7,20 @@ import {
   getTaskStats,
   getTaskById,
   getTasksForClientUser,
+  updateTaskStatus,
 } from "../controllers/taskController.js";
+import { auth } from "../middleware/auth.js"; // adjust path if needed
 
 const router = express.Router();
 
 router.get("/", getAllTasks);
 router.get("/stats", getTaskStats);
 router.post("/", createTask);
-router.put("/:id", updateTask);
+// router.put("/:id", updateTask);
+router.put("/:id", auth, updateTask);
 router.delete("/:id", deleteTask);
 router.get("/:id", getTaskById);
+router.patch("/:id/status", auth, updateTaskStatus);
 
 router.get("/client-tasks/:userId", getTasksForClientUser);
 import User from "../models/User.js";

@@ -109,7 +109,7 @@ export default function ProjectProgress({ stats }) {
   return (
     <div className="bg-white dark:bg-[#0f172a]/80 backdrop-blur-md border border-gray-200 dark:border-gray-700 p-6 rounded-2xl transition-colors duration-300">
       <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center gap-3">
-        <FiTrendingUp className="text-indigo-600" />
+        <FiTrendingUp className="text-indigo-400" />
         Project Progress
       </h2>
 

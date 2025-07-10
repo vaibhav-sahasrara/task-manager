@@ -7,6 +7,7 @@ import Project from "../models/Project.js";
 import { sendMail } from "../utils/mailer.js";
 import { taskAssignedTemplate } from "../utils/templates/taskAssignedTemplate.js";
 import { getIO } from "../socket.js";
+import Notification from "../models/Notification.js";
 
 // ✅ Create Task
 export const createTask = async (req, res) => {
@@ -152,8 +153,76 @@ export const getTaskById = async (req, res) => {
 };
 
 // ✅ Update Task
+// export const updateTask = async (req, res) => {
+//   try {
+//     const { activityLogs, ...rest } = req.body;
+
+//     const updateOps = {
+//       $set: rest,
+//       $push: {
+//         activityLogs: {
+//           user: req.user?._id || null,
+//           action: "Updated task",
+//           details: `Task '${req.body.name}' was updated.`,
+//         },
+//       },
+//     };
+
+//     const updatedTask = await Task.findByIdAndUpdate(req.params.id, updateOps, {
+//       new: true,
+//     })
+//       .populate("assignees", "name email")
+//       .populate("creator", "name")
+//       .populate({
+//         path: "project",
+//         select: "name owner",
+//         populate: {
+//           path: "owner",
+//           select: "name email",
+//         },
+//       });
+
+//     // ✅ 1. Find the user who updated
+//     const employee = await User.findById(req.user.id).select("name email");
+
+//     // ✅ 2. Notify admins
+//     const admins = await User.find({ role: "admin" });
+//     console.log("🔥 updateTask HIT by", employee?.email);
+//     console.log("admins.length =", admins.length);
+
+//     for (const admin of admins) {
+//       await Notification.create({
+//         user: admin._id,
+//         message: `Task "${updatedTask.name}" was updated by ${
+//           employee?.name || "Employee"
+//         }`,
+//         type: "taskStatusUpdated",
+//       });
+//       console.log("→ saved notification", doc._id, "for", admin.email);
+//     }
+
+//     // ✅ 3. Emit via Socket (optional)
+//     const io = getIO();
+//     // io.emit("taskUpdated", updatedTask);
+//     io.emit("notification", {
+//       message: `Task "${updatedTask.name}" was updated by ${employee?.name}`,
+//       type: "taskStatusUpdated",
+//       task: updatedTask,
+//     });
+
+//     res.json(updatedTask);
+//   } catch (err) {
+//     console.error("❌ Error updating task:", err);
+//     res
+//       .status(400)
+//       .json({ error: "Invalid update data", details: err.message });
+//   }
+// };
+
+// ✅ Update Task
 export const updateTask = async (req, res) => {
   try {
+    /* ---------- 1. Update the task document ---------- */
     const { activityLogs, ...rest } = req.body;
 
     const updateOps = {
@@ -167,32 +236,95 @@ export const updateTask = async (req, res) => {
       },
     };
 
-    const updatedTask = await Task.findByIdAndUpdate(req.params.id, updateOps, {
-      new: true,
-    })
+    const updatedTask = await Task.findByIdAndUpdate(
+      req.params.id,
+      updateOps,
+      { new: true }
+    )
       .populate("assignees", "name email")
       .populate("creator", "name")
       .populate({
         path: "project",
         select: "name owner",
-        populate: {
-          path: "owner",
-          select: "name email",
-        },
+        populate: { path: "owner", select: "name email" },
       });
-    const io = getIO();
-    io.emit("taskUpdated", updatedTask);
 
+    /* ---------- 2. Identify the employee who updated ---------- */
+    const employee = await User.findById(req.user.id).select("name email");
+
+    /* ---------- 3. Notify every admin ---------- */
+    const admins = await User.find({ role: "admin" });
+    console.log("🔥 updateTask HIT by", employee?.email);
+    console.log("admins.length =", admins.length);
+
+    const io = getIO();
+
+    for (const admin of admins) {
+      // (a) Save a Notification document
+      const notif = await Notification.create({
+        user: admin._id,
+        message: `Task "${updatedTask.name}" was updated by ${employee?.name || "Employee"}`,
+        type: "taskStatusUpdated",
+      });
+      console.log("→ saved notification", notif._id, "for", admin.email);
+
+      // (b) Emit it to that admin’s personal room
+      io.to(admin._id.toString()).emit("notification", notif);
+      console.log("📢 Emitting notification to room:", admin._id.toString());
+    }
+
+    /* ---------- 4. Respond to the client ---------- */
     res.json(updatedTask);
   } catch (err) {
     console.error("❌ Error updating task:", err);
-    res
-      .status(400)
-      .json({ error: "Invalid update data", details: err.message });
+    res.status(400).json({ error: "Invalid update data", details: err.message });
   }
 };
 
+
+
+// export const updateTask = async (req, res) => {
+//   try {
+//     const { activityLogs, ...rest } = req.body;
+
+//     const updateOps = {
+//       $set: rest,
+//       $push: {
+//         activityLogs: {
+//           user: req.user?._id || null,
+//           action: "Updated task",
+//           details: `Task '${req.body.name}' was updated.`,
+//         },
+//       },
+//     };
+
+//     const updatedTask = await Task.findByIdAndUpdate(req.params.id, updateOps, {
+//       new: true,
+//     })
+//       .populate("assignees", "name email")
+//       .populate("creator", "name")
+//       .populate({
+//         path: "project",
+//         select: "name owner",
+//         populate: {
+//           path: "owner",
+//           select: "name email",
+//         },
+//       });
+//     const io = getIO();
+//     io.emit("taskUpdated", updatedTask);
+
+//     res.json(updatedTask);
+//   } catch (err) {
+//     console.error("❌ Error updating task:", err);
+//     res
+//       .status(400)
+//       .json({ error: "Invalid update data", details: err.message });
+//   }
+// };
+
 // ✅ Delete Task
+
 export const deleteTask = async (req, res) => {
   try {
     const deleted = await Task.findByIdAndDelete(req.params.id);
@@ -304,5 +436,38 @@ export const getTasksForClientUser = async (req, res) => {
   } catch (err) {
     console.error("❌ Error fetching tasks for client:", err);
     res.status(500).json({ error: "Server error", details: err.message });
+  }
+};
+
+export const getNotifications = async (req, res) => {
+  try {
+    const notifications = await Notification.find({
+      user: req.user.id,
+    }).sort({ createdAt: -1 });
+
+    res.json(notifications);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch notifications" });
+  }
+};
+
+export const updateTaskStatus = async (req, res) => {
+  const { status } = req.body;
+  if (!status) return res.status(400).json({ message: "Status is required" });
+
+  try {
+    const updatedTask = await Task.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
+    if (!updatedTask)
+      return res.status(404).json({ message: "Task not found" });
+
+    res.status(200).json(updatedTask);
+  } catch (err) {
+    console.error("Error updating task status", err);
+    res.status(500).json({ message: "Server error" });
   }
 };

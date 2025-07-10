@@ -40,7 +40,7 @@ const AllUsers = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
             All Users
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">

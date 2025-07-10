@@ -71,7 +71,7 @@ export default function StatsCards({ projects, tasks, team, stats }) {
   );
 
   return (
-    <div className="grid gap-6 md:grid-cols-4">
+    <div className="grid gap-6  md:grid-cols-4">
       <Card
         icon={<FiClipboard />}
         label="Total Projects"
