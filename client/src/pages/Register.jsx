@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import DarkModeToggle from "../ui/DarkModeToggle";
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -45,8 +46,14 @@ export default function Register() {
 
   return (
     <div className="flex min-h-screen font-sans">
+      <DarkModeToggle />
       {/* Left panel */}
-      <div className="hidden w-1/2 bg-gradient-to-br from-purple-600 via-indigo-600 to-indigo-700 p-6 text-white lg:flex flex-col justify-center rounded-tr-[3rem] rounded-br-[3rem] shadow-2xl">
+      <div
+        className="hidden w-1/2 lg:flex flex-col justify-center
+                      bg-gradient-to-br from-purple-600 via-indigo-600 to-indigo-700 text-white
+                      dark:from-gray-900 dark:via-gray-800 dark:to-gray-800
+                      p-6 rounded-tr-[3rem] rounded-br-[3rem] shadow-2xl"
+      >
         <div>
           <h1 className="text-4xl font-bold drop-shadow-sm">
             Sahasrara Metatech
@@ -66,16 +73,18 @@ export default function Register() {
       </div>
 
       {/* Right panel */}
-      <div className="flex w-full items-center justify-center bg-gray-100 lg:w-1/2">
-        <div className="w-full max-w-sm bg-white p-6 rounded-2xl shadow-md space-y-4">
+      <div className="flex w-full items-center justify-center bg-gray-100 dark:bg-gray-900 lg:w-1/2">
+        <div className="w-full max-w-sm bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md space-y-4">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-800">Create Account</h2>
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+              Create Account
+            </h2>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name */}
             <div>
-              <label className="block text-sm text-gray-600 mb-1">
+              <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">
                 Full Name
               </label>
               <input
@@ -83,27 +92,29 @@ export default function Register() {
                 name="name"
                 required
                 onChange={handleChange}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 shadow-sm"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700  px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500  dark:text-gray-100  focus:border-transparent bg-gray-50 shadow-sm"
                 placeholder="Your Name"
               />
             </div>
 
             {/* Email */}
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Email</label>
+              <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">
+                Email
+              </label>
               <input
                 type="email"
                 name="email"
                 required
                 onChange={handleChange}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 shadow-sm"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 shadow-sm"
                 placeholder="you@example.com"
               />
             </div>
 
             {/* Password */}
             <div className="relative">
-              <label className="block text-sm text-gray-600 mb-1">
+              <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1">
                 Password
               </label>
               <input
@@ -111,11 +122,11 @@ export default function Register() {
                 name="password"
                 required
                 onChange={handleChange}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 shadow-sm"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 shadow-sm"
                 placeholder="••••••••"
               />
               <div
-                className="absolute top-9 right-3 text-gray-500 cursor-pointer"
+                className="absolute top-9 right-3 text-gray-500 dark:text-gray-400 cursor-pointer"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <FiEyeOff /> : <FiEye />}
@@ -132,11 +143,11 @@ export default function Register() {
                 name="confirmPassword"
                 required
                 onChange={handleChange}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 shadow-sm"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 shadow-sm"
                 placeholder="••••••••"
               />
               <div
-                className="absolute top-9 right-3 text-gray-500 cursor-pointer"
+                className="absolute top-9 right-3 text-gray-500 dark:text-gray-400 cursor-pointer"
                 onClick={() => setShowConfirm(!showConfirm)}
               >
                 {showConfirm ? <FiEyeOff /> : <FiEye />}

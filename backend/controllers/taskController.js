@@ -152,7 +152,6 @@ export const getTaskById = async (req, res) => {
   }
 };
 
-
 // ✅ Update Task
 export const updateTask = async (req, res) => {
   try {
@@ -170,11 +169,9 @@ export const updateTask = async (req, res) => {
       },
     };
 
-    const updatedTask = await Task.findByIdAndUpdate(
-      req.params.id,
-      updateOps,
-      { new: true }
-    )
+    const updatedTask = await Task.findByIdAndUpdate(req.params.id, updateOps, {
+      new: true,
+    })
       .populate("assignees", "name email")
       .populate("creator", "name")
       .populate({
@@ -197,7 +194,9 @@ export const updateTask = async (req, res) => {
       // (a) Save a Notification document
       const notif = await Notification.create({
         user: admin._id,
-        message: `Task "${updatedTask.name}" was updated by ${employee?.name || "Employee"}`,
+        message: `Task "${updatedTask.name}" was updated by ${
+          employee?.name || "Employee"
+        }`,
         type: "taskStatusUpdated",
       });
       console.log("→ saved notification", notif._id, "for", admin.email);
@@ -211,11 +210,11 @@ export const updateTask = async (req, res) => {
     res.json(updatedTask);
   } catch (err) {
     console.error("❌ Error updating task:", err);
-    res.status(400).json({ error: "Invalid update data", details: err.message });
+    res
+      .status(400)
+      .json({ error: "Invalid update data", details: err.message });
   }
 };
-
-
 
 export const deleteTask = async (req, res) => {
   try {
