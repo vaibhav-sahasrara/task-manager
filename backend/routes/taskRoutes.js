@@ -9,7 +9,7 @@ import {
   getTasksForClientUser,
   updateTaskStatus,
 } from "../controllers/taskController.js";
-import { auth } from "../middleware/auth.js"; // adjust path if needed
+import { auth } from "../middleware/auth.js"; 
 
 const router = express.Router();
 

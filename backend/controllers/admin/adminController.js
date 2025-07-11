@@ -1,8 +1,6 @@
 import User from "../../models/User.js";
 import TeamMember from "../../models/TeamMember.js";
 
-// import mongoose from "mongoose";
-
 // GET all pending users
 export const getPendingUsers = async (req, res) => {
   try {
@@ -111,7 +109,6 @@ export const approveUserAndCreateProfile = async (req, res) => {
   }
 };
 
-
 export const toggleUserStatus = async (req, res) => {
   const { userId } = req.params;
   const { isActive } = req.body;
@@ -126,7 +123,9 @@ export const toggleUserStatus = async (req, res) => {
     if (!user) return res.status(404).json({ error: "User not found" });
 
     res.status(200).json({
-      message: `User account ${isActive ? "activated" : "deactivated"} successfully`,
+      message: `User account ${
+        isActive ? "activated" : "deactivated"
+      } successfully`,
       user,
     });
   } catch (err) {
@@ -134,3 +133,4 @@ export const toggleUserStatus = async (req, res) => {
     res.status(500).json({ error: "Failed to update user status" });
   }
 };
+

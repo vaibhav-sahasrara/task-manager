@@ -21,10 +21,23 @@ const AllUsers = () => {
 
   const toggleUserStatus = async (userId, isActive) => {
     try {
-      await axios.patch(`/api/admin/user-status/${userId}`, { isActive }, config);
+      await axios.patch(
+        `/api/admin/user-status/${userId}`,
+        { isActive },
+        config
+      );
       fetchUsers(); // Refresh user list
     } catch (err) {
       console.error("❌ Failed to update user status", err);
+    }
+  };
+
+  const deleteUser = async (userId) => {
+    try {
+      await axios.delete(`/api/auth/${userId}`, config);
+      fetchUsers();
+    } catch (err) {
+      console.error("❌ Failed to delete user", err);
     }
   };
 
@@ -57,6 +70,7 @@ const AllUsers = () => {
               key={user._id}
               user={user}
               toggleUserStatus={toggleUserStatus}
+              deleteUser={deleteUser}
             />
           ))}
         </div>

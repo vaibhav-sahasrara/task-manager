@@ -1,7 +1,5 @@
 import TeamMember from "../models/TeamMember.js";
-
 import User from "../models/User.js";
-// import TeamMember from '../models/teamMember.js';
 import mongoose from "mongoose";
 
 export const createTeamMemberFromUser = async (req, res) => {
@@ -62,7 +60,6 @@ export const getAllTeamMembers = async (req, res) => {
   }
 };
 
-// Create a new team member
 // Create a new team member
 export const createTeamMember = async (req, res) => {
   try {

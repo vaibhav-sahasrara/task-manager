@@ -1,10 +1,9 @@
-
 import jwt from "jsonwebtoken";
 
 // Middleware to verify JWT and attach user to req
 export const auth = (req, res, next) => {
   const authHeader = req.headers.authorization;
-  // console.log("🔍 Authorization header:", authHeader); 
+  // console.log("🔍 Authorization header:", authHeader);
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ message: "No token provided" });

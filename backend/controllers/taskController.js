@@ -152,72 +152,6 @@ export const getTaskById = async (req, res) => {
   }
 };
 
-// ✅ Update Task
-// export const updateTask = async (req, res) => {
-//   try {
-//     const { activityLogs, ...rest } = req.body;
-
-//     const updateOps = {
-//       $set: rest,
-//       $push: {
-//         activityLogs: {
-//           user: req.user?._id || null,
-//           action: "Updated task",
-//           details: `Task '${req.body.name}' was updated.`,
-//         },
-//       },
-//     };
-
-//     const updatedTask = await Task.findByIdAndUpdate(req.params.id, updateOps, {
-//       new: true,
-//     })
-//       .populate("assignees", "name email")
-//       .populate("creator", "name")
-//       .populate({
-//         path: "project",
-//         select: "name owner",
-//         populate: {
-//           path: "owner",
-//           select: "name email",
-//         },
-//       });
-
-//     // ✅ 1. Find the user who updated
-//     const employee = await User.findById(req.user.id).select("name email");
-
-//     // ✅ 2. Notify admins
-//     const admins = await User.find({ role: "admin" });
-//     console.log("🔥 updateTask HIT by", employee?.email);
-//     console.log("admins.length =", admins.length);
-
-//     for (const admin of admins) {
-//       await Notification.create({
-//         user: admin._id,
-//         message: `Task "${updatedTask.name}" was updated by ${
-//           employee?.name || "Employee"
-//         }`,
-//         type: "taskStatusUpdated",
-//       });
-//       console.log("→ saved notification", doc._id, "for", admin.email);
-//     }
-
-//     // ✅ 3. Emit via Socket (optional)
-//     const io = getIO();
-//     // io.emit("taskUpdated", updatedTask);
-//     io.emit("notification", {
-//       message: `Task "${updatedTask.name}" was updated by ${employee?.name}`,
-//       type: "taskStatusUpdated",
-//       task: updatedTask,
-//     });
-
-//     res.json(updatedTask);
-//   } catch (err) {
-//     console.error("❌ Error updating task:", err);
-//     res
-//       .status(400)
-//       .json({ error: "Invalid update data", details: err.message });
-//   }
-// };
 
 // ✅ Update Task
 export const updateTask = async (req, res) => {
@@ -282,48 +216,6 @@ export const updateTask = async (req, res) => {
 };
 
 
-
-// export const updateTask = async (req, res) => {
-//   try {
-//     const { activityLogs, ...rest } = req.body;
-
-//     const updateOps = {
-//       $set: rest,
-//       $push: {
-//         activityLogs: {
-//           user: req.user?._id || null,
-//           action: "Updated task",
-//           details: `Task '${req.body.name}' was updated.`,
-//         },
-//       },
-//     };
-
-//     const updatedTask = await Task.findByIdAndUpdate(req.params.id, updateOps, {
-//       new: true,
-//     })
-//       .populate("assignees", "name email")
-//       .populate("creator", "name")
-//       .populate({
-//         path: "project",
-//         select: "name owner",
-//         populate: {
-//           path: "owner",
-//           select: "name email",
-//         },
-//       });
-//     const io = getIO();
-//     io.emit("taskUpdated", updatedTask);
-
-//     res.json(updatedTask);
-//   } catch (err) {
-//     console.error("❌ Error updating task:", err);
-//     res
-//       .status(400)
-//       .json({ error: "Invalid update data", details: err.message });
-//   }
-// };
-
-// ✅ Delete Task
 
 export const deleteTask = async (req, res) => {
   try {

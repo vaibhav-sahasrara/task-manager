@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 import slugify from "slugify";
 
@@ -69,10 +68,10 @@ const projectSchema = new mongoose.Schema(
 projectSchema.pre("save", async function (next) {
   if (!this.isNew || this.projectCode) return next();
 
-  const baseSlug = slugify(
-    `${this.company || "PRJ"}-${this.name}`,
-    { lower: true, strict: true }
-  ).toUpperCase();
+  const baseSlug = slugify(`${this.company || "PRJ"}-${this.name}`, {
+    lower: true,
+    strict: true,
+  }).toUpperCase();
 
   // Count existing similar slugs
   const count = await mongoose.model("Project").countDocuments({

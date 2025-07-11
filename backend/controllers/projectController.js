@@ -115,8 +115,6 @@ export const getProjectsByUser = async (req, res) => {
 
 
 // Add this to your project controller
-
-
 export const getProjectProgress = async (req, res) => {
   try {
     // 1. Get all projects

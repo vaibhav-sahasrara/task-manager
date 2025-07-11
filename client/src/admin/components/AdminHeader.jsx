@@ -1,18 +1,13 @@
 // import { useState } from "react";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-// import { FiLogOut, FiChevronDown } from "react-icons/fi";
 import { FiLogOut, FiChevronDown, FiSun, FiMoon } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
-// import { FiSun, FiMoon } from "react-icons/fi";
 import useDarkMode from "../../utils/useDarkMode"; // adjust path as needed
 import useNotifications from "../../hooks/useNotifications";
 import { useContext } from "react";
-// import { useNavigate } from "react-router-dom";
-// import { NotificationContext } from "../../context/NotificationContext";
 import NotificationDropdown from "./common/NotificationDropdown"; // adjust the path
 
-// import { useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 
 export default function AdminHeader() {
@@ -25,15 +20,9 @@ export default function AdminHeader() {
   const [showModal, setShowModal] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // const { unread, read, all, markNotificationAsRead } = useNotifications();
-  // const [dropdownOpen, setDropdownOpen] = useState(false);
-  // const [showModal,   setShowModal]     = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
-  // const [menuOpen, setMenuOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem("user")) || {};
   const role = localStorage.getItem("role") || "Admin";
-  // const unread = notifications.filter((n) => !n.isRead);
-  // const read = notifications.filter((n) => n.isRead);
 
   const { unread, read, all, markNotificationAsRead } = useNotifications();
   // const [notifOpen, setNotifOpen] = useState(false);
@@ -55,15 +44,6 @@ export default function AdminHeader() {
       }
     });
   }, [unread]);
-
-  // useEffect(() => {
-  //   all.forEach((n) => {
-  //     if (!seen.current.has(n._id)) {
-  //       toast.info(n.message);
-  //       seen.current.add(n._id);
-  //     }
-  //   });
-  // }, [all]);
 
   return (
     <>
@@ -182,7 +162,7 @@ export default function AdminHeader() {
               transition={{ duration: 0.2 }}
               className="bg-white dark:bg-gray-800 rounded-xl  shadow-xl w-[90%] max-w-sm p-5 text-center"
             >
-              <h2 className="text-lg font-semibold text-gray-800 mb-2">
+              <h2 className="text-lg font-semibold dark:text-gray-300 text-gray-800 mb-2">
                 Confirm Logout
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
