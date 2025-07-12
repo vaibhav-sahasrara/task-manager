@@ -12,6 +12,10 @@ import projectRoutes from "./routes/projectRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 import adminRoutes from "./routes/admin/adminRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
+
+import reportRoutes from './routes/reportRoutes.js';
+
+
 dotenv.config();
 
 const app = express();
@@ -25,6 +29,8 @@ app.use("/api", protectedRoutes);
 app.use("/api/team", teamMemberRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/tasks", taskRoutes);
+app.use('/api/reports', reportRoutes);
+
 
 app.use("/api/notifications", notificationRoutes);
 // === DB Connection

@@ -1,341 +1,232 @@
-// import React, { useEffect, useState } from "react";
-// import axios from "../../utils/axiosInstance";
-// import {
-//   FiFileText,
-//   FiBarChart2,
-//   FiClock,
-//   FiTrendingUp,
-//   FiCheckCircle,
-//   FiFolder,
-// } from "react-icons/fi";
+import React, { useMemo, useEffect, useState } from "react";
 
-// const EmployeeReports = () => {
-//   const [tasks, setTasks] = useState([]);
-//   const [projects, setProjects] = useState([]);
-//   const user = JSON.parse(localStorage.getItem("user"));
-//   const memberId = user?.linkedMember?._id;
-//   const userId = user?.id;
+import { Card, CardContent } from "../../admin/components/common/Card";
+import { Progress } from "../../ui/Progress";
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/Tabs";
+import { Tabs } from "../../ui/Tabs"; // ✅ Only import what exists
 
-//   useEffect(() => {
-//     if (!userId || !memberId) return;
-
-//     const fetchReports = async () => {
-//       try {
-//         const [tasksRes, projectsRes] = await Promise.all([
-//           axios.get(`/api/tasks/client-tasks/${userId}`),
-//           axios.get(`/api/projects/user/${memberId}`),
-//         ]);
-
-//         setTasks(tasksRes.data.tasks || []);
-//         setProjects(projectsRes.data || []);
-//       } catch (err) {
-//         console.error("Failed to fetch client reports", err);
-//       }
-//     };
-
-//     fetchReports();
-//   }, [userId, memberId]);
-
-//   const getPriorityBadge = (priority) => {
-//     const colorMap = {
-//       High: "bg-red-100 text-red-600",
-//       Medium: "bg-yellow-100 text-yellow-600",
-//       Low: "bg-green-100 text-green-600",
-//     };
-//     return (
-//       <span
-//         className={`px-2 py-1 rounded-full text-xs font-medium ${
-//           colorMap[priority] || "bg-gray-200 text-gray-700"
-//         }`}
-//       >
-//         {priority}
-//       </span>
-//     );
-//   };
-
-//   return (
-//     <div className="space-y-8 ">
-//       <div className="flex items-center justify-between">
-//         <h1 className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
-//           Employee Reports
-//         </h1>
-//         <span className="text-sm text-gray-500">
-//           Generated for {user?.name}
-//         </span>
-//       </div>
-
-//       {/* Stats */}
-//       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-//         <StatCard
-//           icon={<FiCheckCircle />}
-//           label="Completed Tasks"
-//           value={tasks.filter((t) => t.status === "Done").length}
-//           color="green"
-//         />
-//         <StatCard
-//           icon={<FiClock />}
-//           label="Pending Tasks"
-//           value={tasks.filter((t) => t.status !== "Done").length}
-//           color="yellow"
-//         />
-//         <StatCard
-//           icon={<FiFolder />}
-//           label="Active Projects"
-//           value={projects.length}
-//           color="blue"
-//         />
-//       </div>
-
-//       {/* Task Report */}
-//       <div className="bg-white rounded-xl shadow p-6 overflow-x-auto">
-//         <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-//           <FiBarChart2 className="text-indigo-500" /> Task Breakdown
-//         </h2>
-//         <table className="min-w-full text-sm text-left border-t">
-//           <thead>
-//             <tr className="text-gray-600 bg-gray-50">
-//               <th className="py-2 px-3">Task</th>
-//               <th className="py-2 px-3">Project</th>
-//               <th className="py-2 px-3">Status</th>
-//               <th className="py-2 px-3">Progress</th>
-//               <th className="py-2 px-3">Priority</th>
-//               <th className="py-2 px-3">Deadline</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {tasks.map((task, idx) => (
-//               <tr key={idx} className="border-b hover:bg-gray-50">
-//                 <td className="py-2 px-3 font-medium">{task.name}</td>
-//                 <td className="py-2 px-3">{task.project?.name || "-"}</td>
-//                 <td className="py-2 px-3">
-//                   <span
-//                     className={`px-2 py-1 rounded-full text-xs font-semibold ${
-//                       task.status === "Done"
-//                         ? "bg-green-100 text-green-600"
-//                         : task.status === "In Progress"
-//                         ? "bg-blue-100 text-blue-600"
-//                         : "bg-gray-100 text-gray-600"
-//                     }`}
-//                   >
-//                     {task.status}
-//                   </span>
-//                 </td>
-//                 <td className="py-2 px-3 w-48">
-//                   <div className="w-full bg-gray-200 rounded-full h-3">
-//                     <div
-//                       className={`h-3 rounded-full ${
-//                         task.progress >= 100
-//                           ? "bg-green-500"
-//                           : task.progress > 0
-//                           ? "bg-blue-500"
-//                           : "bg-gray-400"
-//                       }`}
-//                       style={{ width: `${task.progress}%` }}
-//                     ></div>
-//                   </div>
-//                 </td>
-//                 <td className="py-2 px-3">{getPriorityBadge(task.priority)}</td>
-//                 <td className="py-2 px-3 text-gray-500">
-//                   {new Date(task.deadline).toLocaleDateString("en-GB")}
-//                 </td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       </div>
-//     </div>
-//   );
-// };
-
-// const StatCard = ({ icon, label, value, color }) => {
-//   const colorMap = {
-//     green: "bg-green-100 text-green-600",
-//     yellow: "bg-yellow-100 text-yellow-600",
-//     blue: "bg-blue-100 text-blue-600",
-//   };
-//   return (
-//     <div className="flex items-center gap-4 p-4 bg-white rounded-xl shadow hover:shadow-md transition">
-//       <div className={`${colorMap[color]} p-3 rounded-full text-xl`}>
-//         {icon}
-//       </div>
-//       <div>
-//         <div className="text-sm text-gray-500">{label}</div>
-//         <div className="text-xl font-bold text-gray-800">{value}</div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default EmployeeReports;
-
-
-
-import React, { useEffect, useState } from "react";
+import { ScrollArea } from "../../ui/ScrollArea";
 import axios from "../../utils/axiosInstance";
 import {
-  FiFileText,
-  FiBarChart2,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
+import { motion } from "framer-motion";
+import {
+  FiCalendar,
   FiClock,
   FiTrendingUp,
   FiCheckCircle,
-  FiFolder,
 } from "react-icons/fi";
 
-const EmployeeReports = () => {
-  const [tasks, setTasks] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const user = JSON.parse(localStorage.getItem("user"));
-  const memberId = user?.linkedMember?._id;
-  const userId = user?.id;
+/**
+ * EmployeeReport component
+ * Props:
+ *   reportData: { tasks: Task[], byProject: { _id, projectName, taskCount }[] }
+ */
+export default function EmployeeReport() {
+  const [report, setReport] = useState(null);
 
   useEffect(() => {
-    if (!userId || !memberId) return;
-
-    const fetchReports = async () => {
-      try {
-        const [tasksRes, projectsRes] = await Promise.all([
-          axios.get(`/api/tasks/client-tasks/${userId}`),
-          axios.get(`/api/projects/user/${memberId}`),
-        ]);
-
-        setTasks(tasksRes.data.tasks || []);
-        setProjects(projectsRes.data || []);
-      } catch (err) {
-        console.error("Failed to fetch client reports", err);
-      }
+    const fetchReport = async () => {
+      const { data } = await axios.get("/api/reports/me", {
+        headers: { Authorization: `Bearer ${localStorage.token}` },
+      });
+      setReport(data);
     };
+    fetchReport();
+  }, []);
 
-    fetchReports();
-  }, [userId, memberId]);
+  // Always define tasks and byProject (even if report is null)
+  const tasks = report?.tasks || [];
+  const byProject = report?.byProject || [];
 
-  const getPriorityBadge = (priority) => {
-    const colorMap = {
-      High: "bg-red-100 dark:bg-red-400/10 text-red-600 dark:text-red-400",
-      Medium: "bg-yellow-100 dark:bg-yellow-400/10 text-yellow-600 dark:text-yellow-400",
-      Low: "bg-green-100 dark:bg-green-400/10 text-green-600 dark:text-green-400",
-    };
-    return (
-      <span
-        className={`px-2 py-1 rounded-full text-xs font-medium ${
-          colorMap[priority] || "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
-        }`}
-      >
-        {priority}
-      </span>
+  // ✅ Hooks always run regardless of data
+  const statusBreakdown = useMemo(() => {
+    const counts = tasks.reduce(
+      (acc, t) => {
+        acc[t.status] = (acc[t.status] || 0) + 1;
+        return acc;
+      },
+      { "To Do": 0, "In Progress": 0, Done: 0 }
     );
+    return Object.entries(counts).map(([status, value]) => ({ status, value }));
+  }, [tasks]);
+
+  const priorityBreakdown = useMemo(() => {
+    const counts = tasks.reduce((acc, t) => {
+      acc[t.priority] = (acc[t.priority] || 0) + 1;
+      return acc;
+    }, {});
+    return Object.entries(counts).map(([priority, value]) => ({
+      priority,
+      value,
+    }));
+  }, [tasks]);
+
+  const formatDate = (iso) => new Date(iso).toLocaleDateString();
+
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i = 1) => ({ opacity: 1, y: 0, transition: { delay: i * 0.05 } }),
   };
 
+  if (!report) return <p className="p-4">Loading report…</p>;
+
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-indigo-700 dark:text-yellow-300 flex items-center gap-2">
-          Employee Reports
-        </h1>
-        <span className="text-sm text-gray-500 dark:text-gray-400">
-          Generated for {user?.name}
-        </span>
-      </div>
+    <div className="w-full p-4 space-y-6">
+      {/* KPI Cards */}
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeIn}
+        className="grid grid-cols-2 md:grid-cols-4 gap-4"
+      >
+        <StatCard
+          icon={<FiCalendar className="w-5 h-5" />}
+          label="Total Tasks"
+          value={tasks.length}
+        />
+        <StatCard
+          icon={<FiTrendingUp className="w-5 h-5" />}
+          label="In Progress"
+          value={
+            statusBreakdown.find((s) => s.status === "In Progress")?.value || 0
+          }
+        />
+        <StatCard
+          icon={<FiClock className="w-5 h-5" />}
+          label="Pending"
+          value={statusBreakdown.find((s) => s.status === "To Do")?.value || 0}
+        />
+        <StatCard
+          icon={<FiCheckCircle className="w-5 h-5" />}
+          label="Completed"
+          value={statusBreakdown.find((s) => s.status === "Done")?.value || 0}
+        />
+      </motion.div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <StatCard
-          icon={<FiCheckCircle />}
-          label="Completed Tasks"
-          value={tasks.filter((t) => t.status === "Done").length}
-          color="green"
-        />
-        <StatCard
-          icon={<FiClock />}
-          label="Pending Tasks"
-          value={tasks.filter((t) => t.status !== "Done").length}
-          color="yellow"
-        />
-        <StatCard
-          icon={<FiFolder />}
-          label="Active Projects"
-          value={projects.length}
-          color="blue"
-        />
-      </div>
+      {/* Charts & Task Table */}
+      <Tabs defaultValue="table" className="space-y-6">
+        <TabsList className="w-full justify-center gap-2">
+          <TabsTrigger value="table">Task Table</TabsTrigger>
+          <TabsTrigger value="status">Status Chart</TabsTrigger>
+          <TabsTrigger value="priority">Priority Chart</TabsTrigger>
+          <TabsTrigger value="project">By Project</TabsTrigger>
+        </TabsList>
 
-      {/* Task Report Table */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow p-6 overflow-x-auto">
-        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2">
-          <FiBarChart2 className="text-indigo-500" /> Task Breakdown
-        </h2>
-        <table className="min-w-full text-sm text-left border-t dark:border-gray-700">
-          <thead>
-            <tr className="text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800">
-              <th className="py-2 px-3">Task</th>
-              <th className="py-2 px-3">Project</th>
-              <th className="py-2 px-3">Status</th>
-              <th className="py-2 px-3">Progress</th>
-              <th className="py-2 px-3">Priority</th>
-              <th className="py-2 px-3">Deadline</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tasks.map((task, idx) => (
-              <tr key={idx} className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
-                <td className="py-2 px-3 font-medium text-gray-800 dark:text-gray-100">{task.name}</td>
-                <td className="py-2 px-3 text-gray-700 dark:text-gray-200">{task.project?.name || "-"}</td>
-                <td className="py-2 px-3">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      task.status === "Done"
-                        ? "bg-green-100 dark:bg-green-400/10 text-green-600 dark:text-green-400"
-                        : task.status === "In Progress"
-                        ? "bg-blue-100 dark:bg-blue-400/10 text-blue-600 dark:text-blue-400"
-                        : "bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300"
-                    }`}
+        {/* Task Table */}
+        <TabsContent value="table">
+          <ScrollArea className="h-[400px] rounded-xl border">
+            <table className="min-w-full text-sm">
+              <thead>
+                <tr className="bg-muted/50">
+                  <th className="p-2 text-left">Task</th>
+                  <th className="p-2 text-left">Project</th>
+                  <th className="p-2 text-left">Status</th>
+                  <th className="p-2 text-left">Priority</th>
+                  <th className="p-2 text-left">Deadline</th>
+                  <th className="p-2 text-left">Progress</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tasks.map((t, i) => (
+                  <tr
+                    key={t._id}
+                    className="border-b hover:bg-muted/20 transition"
                   >
-                    {task.status}
-                  </span>
-                </td>
-                <td className="py-2 px-3 w-48">
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
-                    <div
-                      className={`h-3 rounded-full ${
-                        task.progress >= 100
-                          ? "bg-green-500"
-                          : task.progress > 0
-                          ? "bg-blue-500"
-                          : "bg-gray-400"
-                      }`}
-                      style={{ width: `${task.progress}%` }}
-                    ></div>
-                  </div>
-                </td>
-                <td className="py-2 px-3">{getPriorityBadge(task.priority)}</td>
-                <td className="py-2 px-3 text-gray-500 dark:text-gray-400">
-                  {new Date(task.deadline).toLocaleDateString("en-GB")}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                    <td className="p-2 font-medium">{t.name}</td>
+                    <td className="p-2">{t.project?.name}</td>
+                    <td className="p-2">{t.status}</td>
+                    <td className="p-2">{t.priority}</td>
+                    <td className="p-2">{formatDate(t.deadline)}</td>
+                    <td className="p-2 w-40">
+                      <Progress value={t.progress} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </ScrollArea>
+        </TabsContent>
+
+        {/* Status Chart */}
+        <TabsContent value="status">
+         <ChartCard title="Tasks by Status">
+    <ResponsiveContainer width="100%" height={300}>
+      <PieChart>
+        <Pie dataKey="value" data={statusBreakdown} outerRadius={100} label>
+          {statusBreakdown.map((_, idx) => (
+            <Cell
+              key={idx}
+              fill={["#38bdf8", "#fbbf24", "#22c55e"][idx % 3]} // ✅ give each slice a colour
+            />
+          ))}
+        </Pie>
+        <Tooltip />
+      </PieChart>
+    </ResponsiveContainer>
+  </ChartCard>
+        </TabsContent>
+
+        {/* Priority Chart */}
+        <TabsContent value="priority">
+          <ChartCard title="Tasks by Priority">
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={priorityBreakdown}>
+                <XAxis dataKey="priority" />
+                <YAxis allowDecimals={false} />
+                <Bar dataKey="value" fill="#38bdf8" />
+                <Tooltip />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartCard>
+        </TabsContent>
+
+        {/* Project Chart */}
+        <TabsContent value="project">
+          <ChartCard title="Tasks by Project">
+            <ResponsiveContainer width="100%" height={300}>
+              /* Project bars */
+              <BarChart data={byProject}>
+                <XAxis dataKey="projectName" />
+                <YAxis allowDecimals={false} />
+                <Bar dataKey="taskCount" fill="#4ade80" />
+                <Tooltip />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartCard>
+        </TabsContent>
+      </Tabs>
     </div>
   );
-};
+}
 
-const StatCard = ({ icon, label, value, color }) => {
-  const colorMap = {
-    green: "bg-green-100 dark:bg-green-400/10 text-green-600 dark:text-green-400",
-    yellow: "bg-yellow-100 dark:bg-yellow-400/10 text-yellow-600 dark:text-yellow-400",
-    blue: "bg-blue-100 dark:bg-blue-400/10 text-blue-600 dark:text-blue-400",
-  };
-  return (
-    <div className="flex items-center gap-4 p-4 bg-white dark:bg-gray-900 rounded-xl shadow hover:shadow-md transition">
-      <div className={`${colorMap[color]} p-3 rounded-full text-xl`}>
-        {icon}
-      </div>
-      <div>
-        <div className="text-sm text-gray-500 dark:text-gray-300">{label}</div>
-        <div className="text-xl font-bold text-gray-800 dark:text-white">{value}</div>
-      </div>
+/* ----------------- Helper components ----------------- */
+const StatCard = ({ icon, label, value }) => (
+  <Card className="flex items-center gap-4 p-4">
+    <div className="p-3 rounded-full bg-primary/10 text-primary">{icon}</div>
+    <div>
+      <p className="text-2xl font-bold leading-none">{value}</p>
+      <p className="text-muted-foreground text-xs mt-1 uppercase tracking-wide">
+        {label}
+      </p>
     </div>
-  );
-};
+  </Card>
+);
 
-export default EmployeeReports;
+const ChartCard = ({ title, children }) => (
+  <Card>
+    <CardContent className="p-6">
+      <h2 className="font-semibold mb-4 text-lg">{title}</h2>
+      {children}
+    </CardContent>
+  </Card>
+);

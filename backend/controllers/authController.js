@@ -2,9 +2,21 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
+import crypto from "crypto";
 // import { notifyAdmin } from "../utils/mailer.js";
 import TeamMember from "../models/TeamMember.js";
+import { sendMail } from "../utils/mailer.js";
 
+// const transporter = nodemailer.createTransport({
+//   service: "gmail",
+//   auth: {
+//     user: process.env.EMAIL_USER,
+//     pass: process.env.EMAIL_PASS,
+//   },
+// });
+
+console.log("📧 Email:", process.env.EMAIL_USER);
+console.log("🔑 Pass:", process.env.EMAIL_PASS ? "Loaded" : "Missing");
 
 export const register = async (req, res) => {
   try {
@@ -125,5 +137,85 @@ export const deleteUser = async (req, res) => {
   } catch (err) {
     console.error("❌ Failed to delete user:", err);
     res.status(500).json({ error: "Failed to delete user" });
+  }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// POST /api/auth/forgot-password   { email }
+export const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(200).json({
+        message: "If that email is in our system, we’ve sent a link.",
+      });
+    }
+
+    const rawToken = crypto.randomBytes(32).toString("hex");
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(rawToken)
+      .digest("hex");
+
+    user.resetPasswordToken = hashedToken;
+    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
+    await user.save({ validateBeforeSave: false });
+
+    console.log("📨 Raw token:", rawToken);
+    console.log("🔒 Hashed token saved:", hashedToken);
+
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${rawToken}`;
+    const mailOptions = {
+      from: `"Task Manager" <${process.env.EMAIL_USER}>`,
+      to: user.email,
+      subject: "Password Reset Instructions",
+      html: `
+        <p>Hello ${user.name || ""},</p>
+        <p>You requested a password reset. Click the link below (valid for 15 minutes):</p>
+        <a href="${resetUrl}">${resetUrl}</a>
+        <p>If you didn’t request this, please ignore this email.</p>
+      `,
+    };
+
+    await sendMail(mailOptions); // ✅ use your helper
+
+    res.status(200).json({ message: "Reset link sent if the account exists." });
+  } catch (err) {
+    console.error("📧 Forgot‑password error:", err);
+    res.status(500).json({ error: "Failed to send reset link" });
+  }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// POST /api/auth/reset-password/:token   { password }
+export const resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  // Hash the token in the same way we stored it
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+  try {
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: Date.now() }, // still valid?
+    });
+
+    if (!user)
+      return res.status(400).json({ error: "Token is invalid or has expired" });
+
+    // Update password
+    user.password = await bcrypt.hash(password, 10);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res
+      .status(200)
+      .json({ message: "Password reset successful. You can log in." });
+  } catch (err) {
+    console.error("❌ Reset‑password error:", err);
+    res.status(500).json({ error: "Failed to reset password" });
   }
 };

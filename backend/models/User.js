@@ -13,6 +13,8 @@ const userSchema = new mongoose.Schema(
     isApproved: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
     linkedMember: { type: mongoose.Schema.Types.ObjectId, ref: "TeamMember" },
+    resetPasswordToken: { type: String },
+    resetPasswordExpires: { type: Date },
   },
   { timestamps: true }
 );

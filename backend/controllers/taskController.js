@@ -92,6 +92,32 @@ export const createTask = async (req, res) => {
         },
       });
     const io = getIO();
+
+    for (const member of validAssignees) {
+      if (!member.userRef) continue;
+      const user = await User.findById(member.userRef).select("email name");
+
+      // 🔶 Save notification for this user
+      const notif = await Notification.create({
+        user: user._id,
+        message: `You have been assigned a new task: "${name}"`,
+        type: "taskAssigned",
+      });
+
+      // 🔶 Emit the notification to the user’s private socket room
+      io.to(user._id.toString()).emit("notification", notif);
+
+      // ✅ Email logic (you already had)
+      if (user?.email) {
+        const { subject, html } = taskAssignedTemplate({
+          name,
+          userName: user.name,
+          deadline,
+        });
+        await sendMail({ to: user.email, subject, html });
+      }
+    }
+
     io.emit("taskCreated", fullTask); // 🚀 Broadcast to all connected clients
 
     res.status(201).json(fullTask);

@@ -5,6 +5,8 @@ import AdminRoutes from "./admin/AdminRoutes";
 import ClientRoutes from "./client/ClientRoutes";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import EmployeeRoutes from "./employee/EmployeeRoutes";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const App = () => {
   return (
@@ -12,6 +14,8 @@ const App = () => {
       <Route path="/" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
+      <Route path="/forget-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       {/* ✅ Protected Admin Routes */}
       <Route
         path="/admin/*"
@@ -32,7 +36,7 @@ const App = () => {
         }
       />
 
-       {/* ✅ Client Routes */}
+      {/* ✅ Client Routes */}
       <Route
         path="/client/*"
         element={
